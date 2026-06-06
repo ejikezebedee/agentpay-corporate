@@ -1,5 +1,7 @@
 # AgentPay Corporate
 
+![AgentPay Corporate Open Source cover](docs/product-images/agentpay-corporate-open-source-cover.png)
+
 AgentPay Corporate is an open-source agentic commerce platform starter for wallet, escrow, marketplace, seller-service, and API launch workflows. It includes a public website, clickable MVP console, backend starter, database schemas, OpenAPI contract, deployment runbooks, and launch-control documentation.
 
 The project is released under the MIT License. Paid commercial activity should be positioned around implementation support, customization, hosting, training, compliance planning, or managed deployment services rather than restricting access to the source package itself.
