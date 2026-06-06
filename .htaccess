@@ -1,0 +1,16 @@
+RewriteEngine On
+
+# Preserve the new enterprise routes for old cached links.
+RewriteRule ^sell\.html$ /merchant [R=301,L]
+RewriteRule ^buy\.html$ /developers [R=301,L]
+RewriteRule ^sell/?$ /merchant [R=301,L]
+RewriteRule ^buy/?$ /developers [R=301,L]
+
+# Remove visible .html extensions from all public pages.
+RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
+RewriteRule ^(.+)\.html$ /$1 [R=301,L]
+
+# Serve static HTML files through clean routes.
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^([^.]+)$ $1.html [NC,L]

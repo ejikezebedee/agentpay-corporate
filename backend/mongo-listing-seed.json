@@ -1,0 +1,92 @@
+[
+  {
+    "_id": "mongo_lst_agentpay_corporate",
+    "postgres_listing_id": "00000000-0000-4000-8000-000000001000",
+    "schema_id": "agentpay.listing.agentpay-corporate-deployment.v1",
+    "title": "AgentPay Enterprise Node Deployment Package",
+    "category": "Enterprise Deployment",
+    "description": "Premium AgentPay Corporate deployment asset stack with verified archive delivery, schema-driven buyer intake, and launch-control documentation.",
+    "merchant": {
+      "business_name": "AgentPay Verified Services",
+      "rating": 5.0,
+      "completed_orders": 0
+    },
+    "search_terms": ["agentpay", "enterprise", "deployment", "escrow", "marketplace", "node"],
+    "delivery_summary": "Verified AgentPay Corporate ZIP archive and checksum, released through the escrow-locked delivery proof workflow after buyer-agent intake is accepted.",
+    "status": "active",
+    "created_at": "2026-06-06T11:12:00Z",
+    "updated_at": "2026-06-06T11:12:00Z"
+  },
+  {
+    "_id": "mongo_lst_api_review",
+    "postgres_listing_id": "00000000-0000-4000-8000-000000001001",
+    "schema_id": "agentpay.listing.api-integration-review.v1",
+    "title": "API integration review",
+    "category": "Development",
+    "description": "Endpoint contract, webhook, auth, and error-state review.",
+    "merchant": {
+      "business_name": "AgentPay Verified Services",
+      "rating": 4.9,
+      "completed_orders": 24
+    },
+    "search_terms": ["api", "webhook", "auth", "contract", "reconciliation"],
+    "delivery_summary": "Review report covering endpoint contract, webhook behavior, auth handling, and reconciliation gaps.",
+    "status": "active",
+    "created_at": "2026-06-05T19:20:00Z",
+    "updated_at": "2026-06-05T19:20:00Z"
+  },
+  {
+    "_id": "mongo_lst_dataset_cleanup",
+    "postgres_listing_id": "00000000-0000-4000-8000-000000001002",
+    "schema_id": "agentpay.listing.dataset-cleanup-task.v1",
+    "title": "Dataset cleanup task",
+    "category": "Data",
+    "description": "CSV repair, dedupe, field normalization, and proof report.",
+    "merchant": {
+      "business_name": "AgentPay Verified Services",
+      "rating": 4.9,
+      "completed_orders": 24
+    },
+    "search_terms": ["csv", "data", "dedupe", "normalization", "report"],
+    "delivery_summary": "Cleaned source file plus a short proof report describing repaired rows and normalized fields.",
+    "status": "active",
+    "created_at": "2026-06-05T19:20:00Z",
+    "updated_at": "2026-06-05T19:20:00Z"
+  },
+  {
+    "_id": "mongo_lst_copy_audit",
+    "postgres_listing_id": "00000000-0000-4000-8000-000000001003",
+    "schema_id": "agentpay.listing.landing-page-copy-audit.v1",
+    "title": "Landing page copy audit",
+    "category": "Creative",
+    "description": "Conversion critique and rewritten sales sections.",
+    "merchant": {
+      "business_name": "AgentPay Verified Services",
+      "rating": 4.9,
+      "completed_orders": 24
+    },
+    "search_terms": ["copy", "conversion", "landing-page", "audit", "rewrite"],
+    "delivery_summary": "Conversion critique, rewritten hero copy, and revised section messaging for buyer review.",
+    "status": "active",
+    "created_at": "2026-06-05T19:20:00Z",
+    "updated_at": "2026-06-05T19:20:00Z"
+  },
+  {
+    "_id": "mongo_lst_webhook_tester",
+    "postgres_listing_id": "00000000-0000-4000-8000-000000001004",
+    "schema_id": "agentpay.listing.webhook-tester-run.v1",
+    "title": "Webhook tester run",
+    "category": "Development",
+    "description": "Signed callback simulation and reconciliation report.",
+    "merchant": {
+      "business_name": "AgentPay Verified Services",
+      "rating": 4.9,
+      "completed_orders": 24
+    },
+    "search_terms": ["webhook", "callback", "signature", "testing", "reconciliation"],
+    "delivery_summary": "Callback simulation results, response-code evidence, and reconciliation notes.",
+    "status": "active",
+    "created_at": "2026-06-05T19:20:00Z",
+    "updated_at": "2026-06-05T19:20:00Z"
+  }
+]

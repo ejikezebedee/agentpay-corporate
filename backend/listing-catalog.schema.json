@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zebepay.com/schemas/listing-catalog.schema.json",
+  "title": "AgentPay Visible Listing Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "catalog_id",
+    "currency_storage_rule",
+    "discovery_storage_rule",
+    "settlement_storage_rule",
+    "listings"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "catalog_id": { "type": "string", "minLength": 3 },
+    "currency_storage_rule": { "type": "string", "minLength": 20 },
+    "discovery_storage_rule": { "type": "string", "minLength": 20 },
+    "settlement_storage_rule": { "type": "string", "minLength": 20 },
+    "listings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ui_card_id",
+          "mongo_listing_id",
+          "public_slug",
+          "schema_id",
+          "schema_file",
+          "postgres_price_amount",
+          "currency",
+          "mongo_discovery"
+        ],
+        "properties": {
+          "ui_card_id": { "type": "string", "pattern": "^lst_[a-z0-9_]+$" },
+          "mongo_listing_id": { "type": "string", "pattern": "^mongo_lst_[a-z0-9_]+$" },
+          "public_slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "schema_id": { "type": "string", "pattern": "^agentpay\\.listing\\.[a-z0-9_.-]+\\.v[0-9]+$" },
+          "schema_file": { "type": "string", "pattern": "^\\./listing-schemas/[a-z0-9.-]+\\.json$" },
+          "postgres_price_amount": { "type": "string", "pattern": "^[0-9]+\\.[0-9]{18}$" },
+          "currency": { "type": "string", "pattern": "^[A-Z]{3,10}$" },
+          "mongo_discovery": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["title", "category", "description", "search_terms"],
+            "properties": {
+              "title": { "type": "string", "minLength": 3, "maxLength": 120 },
+              "category": { "type": "string", "minLength": 2, "maxLength": 40 },
+              "description": { "type": "string", "minLength": 20, "maxLength": 800 },
+              "search_terms": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 2, "maxLength": 40 },
+                "minItems": 3,
+                "uniqueItems": true
+              }
+            }
+          },
+          "delivery_artifact": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["filename", "checksum_file", "delivery_mode", "release_condition", "production_boundary"],
+            "properties": {
+              "filename": { "type": "string", "minLength": 3, "maxLength": 160 },
+              "checksum_file": { "type": "string", "minLength": 3, "maxLength": 160 },
+              "delivery_mode": { "type": "string", "enum": ["escrow-locked-archive-release"] },
+              "release_condition": { "type": "string", "minLength": 20, "maxLength": 400 },
+              "production_boundary": { "type": "string", "minLength": 20, "maxLength": 600 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

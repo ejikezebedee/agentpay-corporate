@@ -1,0 +1,91 @@
+{
+  "$schema": "./listing-catalog.schema.json",
+  "catalog_id": "agentpay.visible-marketplace-cards.20260605",
+  "currency_storage_rule": "PostgreSQL prices are stored as NUMERIC(36,18) through the money_amount domain. Do not use float or double for financial values.",
+  "discovery_storage_rule": "Searchable title, category, description, merchant summary, and search terms belong in MongoDB discovery documents.",
+  "settlement_storage_rule": "Orders, wallet balances, escrow state, ledger entries, deposits, fees, refunds, and disputes belong in PostgreSQL.",
+  "listings": [
+    {
+      "ui_card_id": "lst_agentpay_corporate",
+      "mongo_listing_id": "mongo_lst_agentpay_corporate",
+      "public_slug": "agentpay-corporate",
+      "schema_id": "agentpay.listing.agentpay-corporate-deployment.v1",
+      "schema_file": "./listing-schemas/agentpay-corporate-deployment.v1.json",
+      "postgres_price_amount": "5000.000000000000000000",
+      "currency": "USDT",
+      "mongo_discovery": {
+        "title": "AgentPay Enterprise Node Deployment Package",
+        "category": "Enterprise Deployment",
+        "description": "Premium AgentPay Corporate deployment asset stack with verified archive delivery, schema-driven buyer intake, and launch-control documentation.",
+        "search_terms": ["agentpay", "enterprise", "deployment", "escrow", "marketplace", "node"]
+      },
+      "delivery_artifact": {
+        "filename": "agentpay-corporate.zip",
+        "checksum_file": "agentpay-corporate.zip.sha256",
+        "delivery_mode": "escrow-locked-archive-release",
+        "release_condition": "Starter logic marks the verified archive ready for buyer-agent delivery after escrow enters escrow_locked status.",
+        "production_boundary": "Production archive delivery, live USDT settlement, and automated escrow release require deployment approval, durable storage, authenticated buyer-agent transport, and completed launch-control gates."
+      }
+    },
+    {
+      "ui_card_id": "lst_api_review",
+      "mongo_listing_id": "mongo_lst_api_review",
+      "public_slug": "api-integration-review",
+      "schema_id": "agentpay.listing.api-integration-review.v1",
+      "schema_file": "./listing-schemas/api-integration-review.v1.json",
+      "postgres_price_amount": "48.000000000000000000",
+      "currency": "USDT",
+      "mongo_discovery": {
+        "title": "API integration review",
+        "category": "Development",
+        "description": "Endpoint contract, webhook, auth, and error-state review.",
+        "search_terms": ["api", "webhook", "auth", "contract", "reconciliation"]
+      }
+    },
+    {
+      "ui_card_id": "lst_dataset_cleanup",
+      "mongo_listing_id": "mongo_lst_dataset_cleanup",
+      "public_slug": "dataset-cleanup-task",
+      "schema_id": "agentpay.listing.dataset-cleanup-task.v1",
+      "schema_file": "./listing-schemas/dataset-cleanup-task.v1.json",
+      "postgres_price_amount": "32.000000000000000000",
+      "currency": "USDT",
+      "mongo_discovery": {
+        "title": "Dataset cleanup task",
+        "category": "Data",
+        "description": "CSV repair, dedupe, field normalization, and proof report.",
+        "search_terms": ["csv", "data", "dedupe", "normalization", "report"]
+      }
+    },
+    {
+      "ui_card_id": "lst_copy_audit",
+      "mongo_listing_id": "mongo_lst_copy_audit",
+      "public_slug": "landing-page-copy-audit",
+      "schema_id": "agentpay.listing.landing-page-copy-audit.v1",
+      "schema_file": "./listing-schemas/landing-page-copy-audit.v1.json",
+      "postgres_price_amount": "25.000000000000000000",
+      "currency": "USDT",
+      "mongo_discovery": {
+        "title": "Landing page copy audit",
+        "category": "Creative",
+        "description": "Conversion critique and rewritten sales sections.",
+        "search_terms": ["copy", "conversion", "landing-page", "audit", "rewrite"]
+      }
+    },
+    {
+      "ui_card_id": "lst_webhook_tester",
+      "mongo_listing_id": "mongo_lst_webhook_tester",
+      "public_slug": "webhook-tester-run",
+      "schema_id": "agentpay.listing.webhook-tester-run.v1",
+      "schema_file": "./listing-schemas/webhook-tester-run.v1.json",
+      "postgres_price_amount": "64.000000000000000000",
+      "currency": "USDT",
+      "mongo_discovery": {
+        "title": "Webhook tester run",
+        "category": "Development",
+        "description": "Signed callback simulation and reconciliation report.",
+        "search_terms": ["webhook", "callback", "signature", "testing", "reconciliation"]
+      }
+    }
+  ]
+}

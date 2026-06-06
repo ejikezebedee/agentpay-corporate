@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zebepay.com/schemas/listings/landing-page-copy-audit.v1.json",
+  "title": "Landing Page Copy Audit Requirements",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["page_url", "target_audience", "conversion_goal"],
+  "properties": {
+    "page_url": { "type": "string", "format": "uri" },
+    "target_audience": { "type": "string", "minLength": 3, "maxLength": 160 },
+    "conversion_goal": { "type": "string", "minLength": 3, "maxLength": 160 },
+    "brand_notes": { "type": "string", "maxLength": 1000 }
+  }
+}

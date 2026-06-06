@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zebepay.com/schemas/mongo-listing-document.schema.json",
+  "title": "AgentPay MongoDB Listing Discovery Document",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "_id",
+    "postgres_listing_id",
+    "schema_id",
+    "title",
+    "category",
+    "description",
+    "merchant",
+    "search_terms",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "_id": { "type": "string", "pattern": "^mongo_lst_[a-z0-9_]+$" },
+    "postgres_listing_id": { "type": "string", "format": "uuid" },
+    "schema_id": { "type": "string", "pattern": "^agentpay\\.listing\\.[a-z0-9_.-]+\\.v[0-9]+$" },
+    "title": { "type": "string", "minLength": 3, "maxLength": 120 },
+    "category": {
+      "type": "string",
+      "enum": ["Development", "Data", "Creative", "Security", "Operations", "Research"]
+    },
+    "description": { "type": "string", "minLength": 20, "maxLength": 800 },
+    "merchant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["business_name", "rating", "completed_orders"],
+      "properties": {
+        "business_name": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "rating": { "type": "number", "minimum": 0, "maximum": 5 },
+        "completed_orders": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "search_terms": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 2, "maxLength": 40 },
+      "minItems": 3,
+      "uniqueItems": true
+    },
+    "delivery_summary": { "type": "string", "maxLength": 300 },
+    "status": { "type": "string", "enum": ["pending_review", "active", "archived"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

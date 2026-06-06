@@ -1,0 +1,144 @@
+# AgentPay Phase 2 Release Audit
+
+## Commercial Cleanup
+
+- [x] No private tokens or keys included
+- [x] No internal server paths included in buyer-facing instructions
+- [x] Uses portable relative file references
+- [x] Install and preview flow documented for static website, console, backend starter, and archive verification
+- [x] Documentation is split into focused buyer packs instead of one oversized file
+- [x] Logging boundaries documented through audit-event starter, durable audit-log warnings, and launch-control requirements
+- [x] Security warnings included for secrets, authentication, webhooks, admin access, payment activation, and production review
+- [x] Phase 28 security remediations documented and validated
+- [x] Security operations and incident-response workflow documented
+- [x] Commercial launch and distribution workflow documented
+- [x] Customer success and retention workflow documented
+- [x] Product roadmap and backlog workflow documented
+- [x] Revenue operations tracker workflow documented
+- [x] Privacy and data governance workflow documented
+- [x] Investor and partner briefing workflow documented
+- [x] Market validation and pilot workflow documented
+- [x] Procurement and RFP response workflow documented
+- [x] Client implementation handoff workflow documented
+- [x] Partner/channel enablement workflow documented
+- [x] Enterprise account expansion workflow documented
+- [x] Context size remains buyer-manageable through quickstart, manifest, evidence map, checklists, and scoped reference documents
+- [x] Commercial polish includes sales copy, screenshots, pricing support, onboarding, support/refund wording, acceptance testing, and due-diligence notes
+- [x] Static website can deploy without build tooling
+- [x] MVP console preview can deploy without build tooling
+- [x] Hostinger deployment instructions included
+- [x] Phase 2 Hostinger backend gate included
+- [x] Backend schema and API contract included
+- [x] Backend service starter included
+- [x] Backend starter tests included
+- [x] Flagship marketplace listing included
+- [x] Machine-readable listing schema route included
+- [x] Sandbox client environment route included
+- [x] Starter auth, audit, webhook verification, and repository boundaries included
+- [x] Production repository scaffold included
+- [x] API server deployment runbook included
+- [x] Hostinger Node.js capability report included
+- [x] Dedicated API server provisioning package included
+- [x] Dedicated API deployment bundle included
+- [x] API server target assessment included
+- [x] Production launch-control and DNS cutover gates included
+- [x] SSH target fingerprint verification script included
+- [x] Migration-ready PostgreSQL baseline included
+- [x] MongoDB discovery boundary documented
+- [x] Optional PocketBase prototype/admin backend boundary documented
+- [x] Listing JSON schemas included for agent-readable purchase inputs
+- [x] Backend limitations documented clearly
+- [x] Security and compliance content avoids false certification claims
+- [x] Contact/demo forms are frontend-only placeholders until backend integration
+- [x] Gumroad sales copy included
+- [x] Buyer pain point and positioning included
+- [x] Pricing justification included
+- [x] Buyer quickstart included
+- [x] Examples and troubleshooting included
+- [x] Final release checklist included
+- [x] Screenshot gallery and screenshot index included
+- [x] License and usage terms included
+- [x] Changelog included
+- [x] Release manifest included
+- [x] Release checksums included
+- [x] Buyer verification guide included
+- [x] Support and refund policy included
+- [x] Customization workbook included
+- [x] Marketplace upload pack included
+- [x] Seller publishing packet included
+- [x] Launch execution run sheet included
+- [x] Buyer acceptance test included
+- [x] Implementation scope pack included
+- [x] Post-purchase onboarding pack included
+- [x] Demo and sales call pack included
+- [x] Pricing and ROI pack included
+- [x] Open-source commercial services pack included
+- [x] Update and maintenance pack included
+- [x] Compliance and risk disclosure pack included
+- [x] Enterprise due diligence pack included
+- [x] PocketBase rapid backend pack included
+- [x] Security remediation pack included
+- [x] Security operations and incident response pack included
+- [x] Commercial launch and distribution pack included
+- [x] Customer success and retention pack included
+- [x] Product roadmap and backlog pack included
+- [x] Revenue operations tracker pack included
+- [x] Privacy and data governance pack included
+- [x] Investor and partner briefing pack included
+- [x] Market validation and pilot pack included
+- [x] Procurement and RFP response pack included
+- [x] Client implementation handoff pack included
+- [x] Partner/channel enablement pack included
+- [x] Enterprise account expansion pack included
+- [x] Executive steering and reporting pack included
+- [x] Team training and adoption pack included
+
+## Buyer/Investor Usability
+
+- [x] Clear positioning
+- [x] Visible logo and brand identity
+- [x] Explains wallet, escrow, agent marketplace, sellers, API, and trust
+- [x] Responsive layout
+- [x] Clickable product console preview
+- [x] Clear path to request access or demo
+- [x] Backend architecture direction included
+- [x] Buyer can understand local preview, static deploy, and backend starter flow without internal context
+- [x] Buyer can preview product visuals before installation
+- [x] Buyer can verify release archive integrity
+- [x] Buyer can verify package contents and backend starter tests independently
+- [x] Buyer can understand support scope, refund expectations, and production exclusions before purchase
+- [x] Buyer or agency can follow customization, upsell, and handoff steps
+- [x] Buyer agent can discover the flagship listing schema through `/api/v1/listings/agentpay-corporate/schema` in the backend starter
+- [x] Buyer agent can inspect sandbox wallet state, flagship listing metadata, schema URL, escrow trigger, and launch gate through `/api/v1/sandbox/client-environment`
+- [x] Seller can publish with metadata, tags, FAQ, captions, and disclosure wording
+- [x] Seller can publish the 5,000 USDT AgentPay Enterprise Node Deployment Package with payload, checksum, schema route, sandbox route, and delivery proof wording
+- [x] Seller can track publish gate, publication record, buyer-agent smoke test, sales stage, first responses, and daily launch review
+- [x] Buyer or seller can run acceptance tests before handoff
+- [x] Seller or agency can quote paid setup, customization, and implementation planning with clear boundaries
+- [x] Seller can onboard buyers with delivery messages, support intake, follow-ups, review request, and escalation routing
+- [x] Seller, agency, or founder can run a structured product demo with objection handling, close options, follow-up email, and call notes
+- [x] Seller or agency can explain price, ROI, discount rules, objection responses, offer bundles, and upsell paths without promising outcomes
+- [x] Seller, agency, or user can distinguish open-source rights from paid service scope before support, hosting, customization, or implementation planning
+- [x] Seller can publish clear update notes, patch releases, compatibility guidance, and maintenance boundaries
+- [x] Buyer, seller, or agency can review regulated-activity warnings, privacy checks, KYC/AML readiness, security risks, and payment launch stop conditions
+- [x] Buyer, agency, procurement team, or investor can review procurement answers, security notes, privacy notes, compliance notes, evidence map, approval gates, and red flags
+- [x] Buyer, agency, or developer can use PocketBase for prototype/admin workflows without confusing it for the production payment ledger
+- [x] Buyer, agency, or developer can review completed admin-route, rollback-script, and frontend-rendering hardening steps
+- [x] Buyer, agency, or operator can follow secret rotation, access review, backup response, vulnerability intake, incident flow, and buyer communication procedures
+- [x] Seller or agency can publish, promote, track, and follow up after launch using a structured distribution workflow
+- [x] Seller or agency can run first-week customer success, triage support, rescue setup issues, request testimonials, offer maintenance, and track retention signals
+- [x] Founder, buyer, developer, or agency can stage MVP work, prioritize backlog items, define acceptance criteria, and keep production stop conditions visible
+- [x] Seller or agency can track pipeline stages, buyer activation, upsells, support risks, KPIs, maintenance, and follow-up actions
+- [x] Buyer, agency, or operator can plan data inventory, privacy notice, access governance, retention, request handling, and production privacy stop conditions
+- [x] Founder, seller, agency, investor, or partner can review one-page positioning, partner fit, investor talking points, briefing agenda, evidence map, follow-up email, red flags, and briefing checklist
+- [x] Founder, seller, agency, or partner can validate buyer demand, score leads, scope paid pilots, record objections, and keep pilot stop conditions visible
+- [x] Buyer, agency, procurement reviewer, partner, or internal stakeholder can use structured RFP answers, evidence references, response rules, follow-up templates, and procurement stop conditions before approval
+- [x] Client, internal team, agency stakeholder, pilot sponsor, or implementation partner can review delivered scope, customization records, training notes, open decisions, revision requests, and production boundaries before handoff closeout
+- [x] Seller, agency, affiliate, consultant, integrator, or training partner can use structured partner positioning, onboarding, deal registration, claim controls, handoff rules, and channel risk controls before partner-led distribution
+- [x] Seller, agency, founder, partner, or account owner can use account stages, expansion offers, stakeholder mapping, follow-up copy, tracker fields, and risk controls before upsell, renewal, rollout, retainer, or production-advisory conversations
+- [x] Founder, executive, board observer, sponsor, agency client, or steering group can use status snapshots, KPI tables, decision briefs, risk registers, monthly reports, escalation rules, and steering checklists before leadership decisions
+- [x] Sales, product, engineering, support, procurement, partner, agency, sponsor, or pilot team can use training agendas, role assignments, adoption scorecards, follow-up templates, and risk controls before team rollout
+
+## Final Note
+
+This package is ready as a Phase 42 open-source static frontend, MVP blueprint, backend starter, flagship marketplace listing package, production repository scaffold, API hosting decision pack, dedicated API server provisioning package, dedicated API deployment bundle, API server target assessment, production launch-control pack, user-delivery pack, screenshot gallery, product cover image, handoff integrity pack, user verification pack, support assurance pack, agency customization workbook, marketplace upload pack, acceptance test pack, implementation scope pack, onboarding pack, demo/sales-call pack, pricing/ROI pack, open-source commercial-services pack, update/maintenance pack, compliance/risk disclosure pack, enterprise due-diligence pack, optional PocketBase rapid backend prototype pack, security remediation pack, security operations/incident-response pack, launch/distribution pack, customer success/retention pack, product roadmap/backlog pack, revenue operations tracker pack, privacy/data governance pack, investor/partner briefing pack, market validation/pilot pack, procurement/RFP response pack, client implementation handoff pack, partner/channel enablement pack, enterprise account expansion pack, executive steering/reporting pack, and team training/adoption pack. Before collecting real payments or user data, connect production repositories, privacy policy, terms, compliance review, secure form handling, durable audit logging, durable archive delivery, and verified payment webhook reconciliation.

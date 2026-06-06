@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zebepay.com/schemas/listings/dataset-cleanup-task.v1.json",
+  "title": "Dataset Cleanup Task Requirements",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["file_url", "file_type", "cleanup_goals"],
+  "properties": {
+    "file_url": { "type": "string", "format": "uri" },
+    "file_type": { "type": "string", "enum": ["csv", "xlsx", "json", "jsonl"] },
+    "cleanup_goals": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["dedupe", "normalize_fields", "repair_rows", "validate_types", "summary_report"] },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "sensitive_data": { "type": "boolean", "default": false },
+    "notes": { "type": "string", "maxLength": 1000 }
+  }
+}

@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AgentPay Console | Wallet, Escrow, and Marketplace Operations</title>
+    <meta name="description" content="AgentPay console for controlled wallets, registered agents, marketplace publishing, escrow, and admin operations.">
+    <link rel="canonical" href="https://zebepay.com/app">
+    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./app.css">
+  </head>
+  <body>
+    <aside class="sidebar" aria-label="AgentPay console navigation">
+      <a class="console-brand" href="./" aria-label="AgentPay public site">
+        <img src="./assets/agentpay-logo.svg?v=20260605b" alt="AgentPay">
+      </a>
+      <nav class="console-nav" data-console-nav>
+        <button class="active" type="button" data-view="dashboard">Dashboard</button>
+        <button type="button" data-view="wallet">Wallet</button>
+        <button type="button" data-view="agents">Agents</button>
+        <button type="button" data-view="marketplace">Marketplace</button>
+        <button type="button" data-view="sandbox">Sandbox</button>
+        <button type="button" data-view="merchant">Merchant</button>
+        <button type="button" data-view="escrow">Escrow</button>
+        <button type="button" data-view="admin">Admin</button>
+        <button type="button" data-view="api">API Keys</button>
+      </nav>
+      <div class="sidebar-status">
+        <span>Private Beta</span>
+        <strong>Sandbox mode</strong>
+      </div>
+    </aside>
+
+    <main class="console-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">AgentPay Product Console</p>
+          <h1>Control wallets, agents, escrow, and marketplace operations.</h1>
+        </div>
+        <div class="topbar-actions">
+          <a class="quiet-button" href="./">Public Site</a>
+          <button class="quiet-button" type="button" data-jump-view="sandbox">Sandbox Wallet</button>
+          <button class="primary-button" type="button" data-action="open-modal">Create Listing</button>
+        </div>
+      </header>
+
+      <section class="view active" data-page="dashboard">
+        <div class="metric-grid">
+          <article><span>Total Balance</span><strong>$12,840.50</strong><small>USDT equivalent</small></article>
+          <article><span>Locked Escrow</span><strong>$2,190.00</strong><small>12 active orders</small></article>
+          <article><span>24h Agent Spend</span><strong>$386.40</strong><small>42% below limit</small></article>
+          <article><span>Risk Queue</span><strong>7</strong><small>Admin reviews pending</small></article>
+        </div>
+
+        <div class="dashboard-grid">
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Agent Status</h2>
+              <span>Operational view</span>
+            </div>
+            <div class="agent-table" data-agent-table></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Recent Activity</h2>
+              <span>Audit-linked</span>
+            </div>
+            <div class="activity-feed" data-activity-feed></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" data-page="wallet">
+        <div class="split-grid">
+          <section class="panel dark-panel">
+            <div class="panel-title">
+              <h2>Master Wallet</h2>
+              <span>Funding-ready</span>
+            </div>
+            <div class="wallet-total">$15,030.50</div>
+            <div class="wallet-breakdown">
+              <p><span>Available</span><strong>$12,840.50</strong></p>
+              <p><span>Escrow locked</span><strong>$2,190.00</strong></p>
+              <p><span>Reserved fees</span><strong>$74.20</strong></p>
+            </div>
+            <button class="primary-button full" type="button" data-wallet-action>Generate Funding Session</button>
+            <div class="sandbox-funding">
+              <span>Sandbox Testnet</span>
+              <strong>1,000.000000000000000000 test USDT</strong>
+              <small>Demo wallet credit for buyer-agent purchase testing only.</small>
+              <button class="quiet-button" type="button" data-sandbox-wallet>Fund Test Wallet</button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Ledger Entries</h2>
+              <span>Double-entry model</span>
+            </div>
+            <div class="ledger-list" data-ledger-list></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" data-page="agents">
+        <div class="section-row">
+          <div>
+            <p class="eyebrow">Agent Controls</p>
+            <h2>Register agents, set limits, and pause spending instantly.</h2>
+          </div>
+          <button class="primary-button" type="button" data-action="open-agent">Register Agent</button>
+        </div>
+        <div class="card-grid" data-agent-cards></div>
+      </section>
+
+      <section class="view" data-page="marketplace">
+        <div class="market-toolbar">
+          <input type="search" placeholder="Search services, APIs, automations" data-search>
+          <select data-category>
+            <option value="all">All categories</option>
+            <option value="Enterprise Deployment">Enterprise Deployment</option>
+            <option value="Development">Development</option>
+            <option value="Data">Data</option>
+            <option value="Creative">Creative</option>
+          </select>
+        </div>
+        <div class="listing-grid" data-listings></div>
+      </section>
+
+      <section class="view" data-page="sandbox">
+        <div class="section-row">
+          <div>
+            <p class="eyebrow">Client Sandbox</p>
+            <h2>Test the flagship listing without moving live funds.</h2>
+          </div>
+          <button class="primary-button" type="button" data-sandbox-wallet>Fund Test Wallet</button>
+        </div>
+        <div class="sandbox-grid">
+          <section class="panel dark-panel">
+            <div class="panel-title">
+              <h2>Test Wallet</h2>
+              <span>testnet only</span>
+            </div>
+            <div class="wallet-total" data-sandbox-balance>1,000 testUSDT</div>
+            <div class="wallet-breakdown">
+              <p><span>Escrow locked</span><strong data-sandbox-escrow>0 testUSDT</strong></p>
+              <p><span>Order target</span><strong>5,000 USDT</strong></p>
+              <p><span>Mode</span><strong>Sandbox</strong></p>
+            </div>
+          </section>
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Buyer-Agent Flow</h2>
+              <span>Discoverable route</span>
+            </div>
+            <div class="sandbox-flow">
+              <p><span>1</span><strong>Read schema</strong><small>/api/v1/listings/agentpay-corporate/schema</small></p>
+              <p><span>2</span><strong>Create order</strong><small>Signed payload with company registration and Ed25519 key.</small></p>
+              <p><span>3</span><strong>Lock escrow</strong><small>Backend marks archive delivery proof ready after escrow_locked.</small></p>
+              <p><span>4</span><strong>Receive proof</strong><small>agentpay-corporate.zip and checksum metadata become attached to the order.</small></p>
+            </div>
+          </section>
+          <section class="panel code-panel">
+            <div class="panel-title">
+              <h2>Sandbox Endpoint</h2>
+              <span>Client state</span>
+            </div>
+            <pre><code>GET /api/v1/sandbox/client-environment
+
+{
+  "mode": "sandbox",
+  "network": "testnet",
+  "wallet": {
+    "asset": "testUSDT",
+    "available_balance": "1000.000000000000000000"
+  },
+  "flagship_listing": {
+    "public_slug": "agentpay-corporate",
+    "schema_url": "/api/v1/listings/agentpay-corporate/schema"
+  }
+}</code></pre>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" data-page="merchant">
+        <div class="split-grid">
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Publish Service</h2>
+              <span>Approval required</span>
+            </div>
+            <form class="stack-form" data-publish-form>
+              <label>Title <input name="title" value="API integration review" required></label>
+              <label>Category <select name="category"><option>Development</option><option>Data</option><option>Creative</option></select></label>
+              <label>Price USDT <input name="price" type="number" min="1" value="48" required></label>
+              <label>Delivery proof <textarea name="proof" rows="4">Endpoint report, webhook checklist, and security notes.</textarea></label>
+              <button class="primary-button" type="submit">Submit for Review</button>
+              <p class="form-note" data-publish-note>Draft not submitted.</p>
+            </form>
+          </section>
+
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Merchant Orders</h2>
+              <span>Escrow-backed</span>
+            </div>
+            <div class="order-list" data-seller-orders></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" data-page="escrow">
+        <div class="timeline-panel">
+          <div class="panel-title">
+            <h2>Escrow State Machine</h2>
+            <span>Order AP-ORD-1048</span>
+          </div>
+          <div class="state-flow">
+            <div class="done"><span>1</span><strong>Created</strong><p>Buyer agent selected a reviewed listing.</p></div>
+            <div class="done"><span>2</span><strong>Approved</strong><p>Policy confirmed amount is inside limits.</p></div>
+            <div class="done"><span>3</span><strong>Locked</strong><p>Ledger moved funds into escrow liability.</p></div>
+            <div class="current"><span>4</span><strong>Delivery</strong><p>Merchant proof submitted for buyer review.</p></div>
+            <div><span>5</span><strong>Release</strong><p>Funds settle after approval or admin decision.</p></div>
+          </div>
+        </div>
+        <div class="escrow-grid" data-escrow-orders></div>
+      </section>
+
+      <section class="view" data-page="admin">
+        <div class="dashboard-grid">
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Review Queue</h2>
+              <span>KYC, listings, disputes</span>
+            </div>
+            <div class="review-list" data-review-list></div>
+          </section>
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Risk Controls</h2>
+              <span>Operator actions</span>
+            </div>
+            <div class="control-list">
+              <button type="button">Pause all high-risk agents</button>
+              <button type="button">Export audit log</button>
+              <button type="button">Open dispute board</button>
+              <button type="button">Reconcile wallet deposits</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" data-page="api">
+        <div class="split-grid">
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Agent API Keys</h2>
+              <span>Scoped access</span>
+            </div>
+            <div class="api-key-list" data-api-keys></div>
+          </section>
+          <section class="panel code-panel">
+            <div class="panel-title">
+              <h2>Flagship Listing Schema</h2>
+              <span>Public discovery</span>
+            </div>
+            <pre><code>GET /api/v1/listings/agentpay-corporate/schema
+
+POST /api/v1/orders
+Authorization: Agent-HMAC key
+Idempotency-Key: agentpay-corporate-order-001
+
+{
+  "public_slug": "agentpay-corporate",
+  "buyer_agent_id": "buyer-agent-001",
+  "request_payload": {
+    "company_registration": {},
+    "buyer_agent": {},
+    "target_deployment": {}
+  }
+}</code></pre>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <dialog class="modal" data-modal>
+      <form method="dialog">
+        <h2>Create Listing</h2>
+        <p>This private beta console action is prepared for backend API connection during production implementation.</p>
+        <button class="primary-button" value="close">Close</button>
+      </form>
+    </dialog>
+
+    <script src="./app.js?v=20260606publish"></script>
+  </body>
+</html>

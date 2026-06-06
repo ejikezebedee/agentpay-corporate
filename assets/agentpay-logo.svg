@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 96" role="img" aria-labelledby="title desc">
+  <title id="title">AgentPay logo</title>
+  <desc id="desc">AgentPay wordmark with a secured agent payment mark.</desc>
+  <defs>
+    <linearGradient id="markGradient" x1="10" x2="82" y1="14" y2="86" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#05D7A0"/>
+      <stop offset=".52" stop-color="#1B7CFF"/>
+      <stop offset="1" stop-color="#10182F"/>
+    </linearGradient>
+  </defs>
+  <rect width="96" height="96" rx="24" fill="#07111F"/>
+  <path d="M48 15 75 30v26c0 17.2-11.3 27-27 34-15.7-7-27-16.8-27-34V30l27-15Z" fill="url(#markGradient)"/>
+  <path d="M36 49h24m-12-12v24" stroke="#F8FBFF" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="29" cy="30" r="4" fill="#F8FBFF"/>
+  <circle cx="67" cy="30" r="4" fill="#F8FBFF"/>
+  <circle cx="48" cy="72" r="4" fill="#F8FBFF"/>
+  <text x="116" y="62" fill="#10182F" font-family="Aptos, Segoe UI, Arial, sans-serif" font-size="46" font-weight="850" letter-spacing="0">AgentPay</text>
+</svg>

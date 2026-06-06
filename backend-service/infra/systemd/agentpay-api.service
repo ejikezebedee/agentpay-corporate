@@ -1,0 +1,20 @@
+[Unit]
+Description=AgentPay API
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/agentpay/backend-service
+EnvironmentFile=/opt/agentpay/backend-service/.env
+ExecStart=/usr/bin/node /opt/agentpay/backend-service/src/server.js
+Restart=always
+RestartSec=5
+User=agentpay
+Group=agentpay
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

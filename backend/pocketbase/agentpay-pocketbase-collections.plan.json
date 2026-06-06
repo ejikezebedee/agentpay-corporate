@@ -1,0 +1,167 @@
+{
+  "schema_version": "agentpay-pocketbase-plan.v1",
+  "purpose": "Prototype collection plan for PocketBase. Confirm exact import syntax against the installed PocketBase release before import.",
+  "production_boundary": "Do not use these collections as the final wallet ledger, escrow settlement store, payment reconciliation store, or regulated financial record store.",
+  "collections": [
+    {
+      "name": "agentpay_buyers",
+      "type": "base",
+      "description": "Buyer onboarding and demo-access records.",
+      "fields": [
+        { "name": "company_name", "type": "text", "required": true },
+        { "name": "contact_name", "type": "text", "required": true },
+        { "name": "contact_email", "type": "email", "required": true },
+        { "name": "use_case", "type": "select", "values": ["founder_demo", "agency_client", "marketplace_operator", "investor_review", "internal_review"] },
+        { "name": "status", "type": "select", "values": ["new", "qualified", "demo_scheduled", "onboarding", "closed", "archived"] },
+        { "name": "notes", "type": "editor" }
+      ],
+      "rules": {
+        "list": "admin only",
+        "view": "admin only",
+        "create": "admin or controlled public intake",
+        "update": "admin only",
+        "delete": "admin only"
+      }
+    },
+    {
+      "name": "agentpay_sellers",
+      "type": "base",
+      "description": "Seller profiles for marketplace prototype workflows.",
+      "fields": [
+        { "name": "seller_name", "type": "text", "required": true },
+        { "name": "service_category", "type": "select", "values": ["api_review", "data_cleanup", "copy_audit", "webhook_testing", "custom"] },
+        { "name": "contact_email", "type": "email" },
+        { "name": "verification_status", "type": "select", "values": ["draft", "review", "approved", "paused", "rejected"] },
+        { "name": "profile_notes", "type": "editor" }
+      ],
+      "rules": {
+        "list": "admin or approved public view",
+        "view": "admin or approved public view",
+        "create": "admin only",
+        "update": "admin only",
+        "delete": "admin only"
+      }
+    },
+    {
+      "name": "agentpay_listings",
+      "type": "base",
+      "description": "Marketplace listing CMS for demo and prototype use.",
+      "fields": [
+        { "name": "title", "type": "text", "required": true },
+        { "name": "slug", "type": "text", "required": true },
+        { "name": "seller", "type": "relation", "collection": "agentpay_sellers" },
+        { "name": "price_amount", "type": "text", "required": true },
+        { "name": "currency", "type": "select", "values": ["USD", "EUR", "USDT", "BNB"] },
+        { "name": "status", "type": "select", "values": ["draft", "review", "published", "paused"] },
+        { "name": "short_description", "type": "text" },
+        { "name": "requirements_json", "type": "json" }
+      ],
+      "rules": {
+        "list": "published public view or admin",
+        "view": "published public view or admin",
+        "create": "admin only",
+        "update": "admin only",
+        "delete": "admin only"
+      }
+    },
+    {
+      "name": "agentpay_demo_orders",
+      "type": "base",
+      "description": "Non-financial demo order tracking. Not a settlement ledger.",
+      "fields": [
+        { "name": "buyer", "type": "relation", "collection": "agentpay_buyers" },
+        { "name": "listing", "type": "relation", "collection": "agentpay_listings" },
+        { "name": "demo_amount", "type": "text" },
+        { "name": "currency", "type": "select", "values": ["USD", "EUR", "USDT", "BNB"] },
+        { "name": "status", "type": "select", "values": ["draft", "approved", "escrow_demo", "delivery_review", "released_demo", "cancelled"] },
+        { "name": "request_payload", "type": "json" },
+        { "name": "operator_notes", "type": "editor" }
+      ],
+      "rules": {
+        "list": "admin only",
+        "view": "admin only",
+        "create": "admin only",
+        "update": "admin only",
+        "delete": "admin only"
+      }
+    },
+    {
+      "name": "agentpay_support_tickets",
+      "type": "base",
+      "description": "Buyer support and implementation support intake.",
+      "fields": [
+        { "name": "buyer", "type": "relation", "collection": "agentpay_buyers" },
+        { "name": "subject", "type": "text", "required": true },
+        { "name": "priority", "type": "select", "values": ["low", "normal", "high", "urgent"] },
+        { "name": "status", "type": "select", "values": ["new", "triage", "waiting_buyer", "in_progress", "resolved", "closed"] },
+        { "name": "message", "type": "editor" },
+        { "name": "attachments", "type": "file" }
+      ],
+      "rules": {
+        "list": "admin only",
+        "view": "admin only",
+        "create": "admin or controlled public intake",
+        "update": "admin only",
+        "delete": "admin only"
+      }
+    },
+    {
+      "name": "agentpay_onboarding_tasks",
+      "type": "base",
+      "description": "Implementation and buyer onboarding task board.",
+      "fields": [
+        { "name": "buyer", "type": "relation", "collection": "agentpay_buyers" },
+        { "name": "task_name", "type": "text", "required": true },
+        { "name": "owner", "type": "text" },
+        { "name": "due_date", "type": "date" },
+        { "name": "status", "type": "select", "values": ["todo", "doing", "blocked", "done", "deferred"] },
+        { "name": "notes", "type": "editor" }
+      ],
+      "rules": {
+        "list": "admin only",
+        "view": "admin only",
+        "create": "admin only",
+        "update": "admin only",
+        "delete": "admin only"
+      }
+    },
+    {
+      "name": "agentpay_evidence_documents",
+      "type": "base",
+      "description": "Procurement, investor, and due-diligence evidence vault metadata.",
+      "fields": [
+        { "name": "title", "type": "text", "required": true },
+        { "name": "category", "type": "select", "values": ["security", "privacy", "compliance", "product", "technical", "license", "support"] },
+        { "name": "review_status", "type": "select", "values": ["draft", "ready", "shared", "expired", "archived"] },
+        { "name": "document_file", "type": "file" },
+        { "name": "summary", "type": "editor" }
+      ],
+      "rules": {
+        "list": "admin only",
+        "view": "admin only",
+        "create": "admin only",
+        "update": "admin only",
+        "delete": "admin only"
+      }
+    },
+    {
+      "name": "agentpay_review_notes",
+      "type": "base",
+      "description": "Internal notes from buyer, partner, procurement, demo, and security review calls.",
+      "fields": [
+        { "name": "buyer", "type": "relation", "collection": "agentpay_buyers" },
+        { "name": "review_type", "type": "select", "values": ["demo", "security", "privacy", "compliance", "procurement", "investor", "implementation"] },
+        { "name": "summary", "type": "editor" },
+        { "name": "next_action", "type": "text" },
+        { "name": "status", "type": "select", "values": ["open", "waiting", "resolved", "closed"] }
+      ],
+      "rules": {
+        "list": "admin only",
+        "view": "admin only",
+        "create": "admin only",
+        "update": "admin only",
+        "delete": "admin only"
+      }
+    }
+  ]
+}

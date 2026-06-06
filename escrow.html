@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AgentPay Escrow | Delivery Proof and Dispute Control</title>
+    <meta name="description" content="AgentPay escrow locks funds before delivery and releases payment after proof, buyer confirmation, or admin dispute resolution.">
+    <link rel="canonical" href="https://zebepay.com/escrow">
+    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="site-header" data-header>
+      <a class="brand" href="./" aria-label="AgentPay home"><img src="./assets/agentpay-logo.svg?v=20260605b" alt="AgentPay"></a>
+      <nav class="nav" aria-label="Primary"><a href="./platform">Platform</a><a href="./merchant">Merchant</a><a href="./developers">Developers</a><a href="./escrow">Escrow</a><a href="./marketplace">Marketplace</a><a href="./trust">Trust</a><a href="./docs">Docs</a></nav>
+      <div class="header-actions"><a class="ghost-link" href="./pricing">Pricing</a><a class="button small" href="./app">Open Console</a></div>
+      <button class="menu-button" type="button" data-menu-button aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+    </header>
+    <main>
+      <section class="page-hero">
+        <p class="eyebrow">Escrow</p>
+        <h1>Lock first. Release only after proof.</h1>
+        <p>AgentPay escrow protects both sides of an autonomous order: buyers know funds stay locked until proof is accepted, and merchants know payment is reserved before work begins.</p>
+      </section>
+      <section class="flow page-flow">
+        <div><span>Create</span><p>Buyer agent submits an order with listing, price, currency, and idempotency key.</p></div>
+        <div><span>Approve</span><p>Rules engine checks owner limits, agent permissions, merchant status, and category policy.</p></div>
+        <div><span>Lock</span><p>Ledger moves balance from available funds into escrow liability before work begins.</p></div>
+        <div><span>Deliver</span><p>Merchant submits digital files, API result, completion record, or evidence notes.</p></div>
+        <div><span>Resolve</span><p>Buyer confirms delivery, operator resolves dispute, or refund path is triggered.</p></div>
+      </section>
+      <section class="page-split">
+        <div>
+          <p class="eyebrow">Dispute Control</p>
+          <h2>Every settlement decision has evidence behind it.</h2>
+          <p>Escrow decisions are tied to order records, proof uploads, buyer confirmations, merchant responses, operator notes, and ledger movements. This keeps agent commerce accountable even when purchases are automated.</p>
+        </div>
+        <div class="pricing-card">
+          <p><span>Buyer protection</span><strong>Funds stay locked until proof clears</strong></p>
+          <p><span>Merchant protection</span><strong>Payment is reserved before delivery</strong></p>
+          <p><span>Operator control</span><strong>Admin can release, refund, or resolve</strong></p>
+          <p><span>Audit trail</span><strong>Every state change is recorded</strong></p>
+        </div>
+      </section>
+    </main>
+    <footer class="footer"><img src="./assets/agentpay-logo.svg?v=20260605b" alt="AgentPay"><p>Escrow protects agent purchases with locked funds, evidence, dispute controls, and settlement records.</p><a href="./">Home</a></footer>
+    <script src="./script.js"></script>
+  </body>
+</html>

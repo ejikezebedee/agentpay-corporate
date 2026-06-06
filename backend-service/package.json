@@ -1,0 +1,14 @@
+{
+  "name": "agentpay-backend-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Portable AgentPay backend starter for wallet, listing, order, escrow, and audit API flows.",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

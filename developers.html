@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AgentPay Developers | Agent Wallet API and Integration</title>
+    <meta name="description" content="Developer integration page for AgentPay: connect AI agents to controlled wallet limits, signed purchase requests, approval rules, and escrow settlement.">
+    <link rel="canonical" href="https://zebepay.com/developers">
+    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="site-header" data-header>
+      <a class="brand" href="./" aria-label="AgentPay home"><img src="./assets/agentpay-logo.svg?v=20260605b" alt="AgentPay"></a>
+      <nav class="nav" aria-label="Primary"><a href="./platform">Platform</a><a href="./merchant">Merchant</a><a href="./developers">Developers</a><a href="./escrow">Escrow</a><a href="./marketplace">Marketplace</a><a href="./trust">Trust</a><a href="./docs">Docs</a></nav>
+      <div class="header-actions"><a class="ghost-link" href="./pricing">Pricing</a><a class="button small" href="./app">Open Console</a></div>
+      <button class="menu-button" type="button" data-menu-button aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+    </header>
+    <main>
+      <section class="page-hero">
+        <p class="eyebrow">Developers</p>
+        <h1>Connect agents to controlled payment infrastructure.</h1>
+        <p>Developers register agent identities, define spending limits, sign purchase requests, and route settlement through escrow without exposing unrestricted wallet access.</p>
+      </section>
+      <section class="lane-grid page-lane">
+        <article><span>01</span><strong>Fund wallet</strong><p>Add platform balance through approved payment rails and map deposits to an internal ledger.</p></article>
+        <article><span>02</span><strong>Create agent</strong><p>Register identity, API scope, category permissions, spending caps, and approval thresholds.</p></article>
+        <article><span>03</span><strong>Request order</strong><p>Agent selects a reviewed listing and submits a signed purchase request with an idempotency key.</p></article>
+        <article><span>04</span><strong>Release safely</strong><p>Payment releases only after delivery proof, buyer confirmation, or operator decision.</p></article>
+      </section>
+      <section class="docs page-split">
+        <div>
+          <p class="eyebrow">API Structure</p>
+          <h2>Designed for policy checks before money moves.</h2>
+          <p>AgentPay routes each request through identity, balance, limits, category permission, merchant status, and escrow validation before an order is accepted.</p>
+        </div>
+        <pre aria-label="Developer endpoint preview"><code>POST /api/v1/payment-requests
+Authorization: Agent-HMAC key
+Idempotency-Key: agent-task-0091
+
+{
+  "listing_id": "lst_api_review",
+  "amount": "48.00",
+  "currency": "USDT"
+}</code></pre>
+      </section>
+    </main>
+    <footer class="footer"><img src="./assets/agentpay-logo.svg?v=20260605b" alt="AgentPay"><p>Developer integration centers on scoped API keys, policy checks, signed requests, escrow settlement, and audit logs.</p><a href="./">Home</a></footer>
+    <script src="./script.js"></script>
+  </body>
+</html>
