@@ -63,7 +63,7 @@ npm test
 Or directly:
 
 ```bash
-npm --prefix backend test
+npm --prefix backend-service test
 ```
 
 ## Reset Local In-Memory State
@@ -98,11 +98,11 @@ Expected: dispute status/timeline updates, messages attach to the dispute, and w
 - If listing/dispute API calls fail with 401, log out and log back in.
 - If ports are already used, set `PORT` for backend or `PORT=4174` for the preview server.
 - If frontend points at the wrong backend, set `AGENTPAY_BACKEND_ORIGIN`.
-- If dashboard layout looks stale, clear browser cache or check the script query version in `frontend/app.html`.
+- If dashboard layout looks stale, clear browser cache or check the script query version in `app.html`.
 
 ## Production Safety Notes
 
-- Current MVP runtime state is in-memory until PostgreSQL repositories are wired.
+- Current local development runtime state uses the in-memory repository adapter until PostgreSQL repositories are wired for hosted production.
 - Do not enable real payments until Binance Pay sandbox/webhook reconciliation is complete.
 - Never credit a wallet before confirmed payment/webhook success.
 - Keep wallet and escrow movement ledger-based and idempotent.

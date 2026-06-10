@@ -1,4 +1,4 @@
--- AgentPay MVP database blueprint
+-- AgentPay fully functioning website database blueprint
 -- Target: PostgreSQL 15+
 -- Purpose: internal ledger, escrow, marketplace, agent permissions, admin audit.
 

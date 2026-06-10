@@ -31,6 +31,7 @@ body {
   background-size: 36px 36px;
   font-family: "Aptos", "Segoe UI", sans-serif;
   overflow-x: hidden;
+  width: 100%;
 }
 
 button, input, select, textarea {
@@ -122,6 +123,8 @@ article small {
 
 .console-shell {
   min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
   padding: clamp(18px, 4vw, 44px);
 }
 
@@ -227,6 +230,7 @@ h2 {
 .agent-card,
 .listing-card,
 .escrow-card {
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: rgba(255,255,255,.84);
@@ -537,6 +541,9 @@ h2 {
   display: grid;
   gap: 10px;
   min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
 }
 
 .product-row {
@@ -545,6 +552,7 @@ h2 {
   gap: 12px;
   align-items: center;
   width: 100%;
+  min-width: 980px;
   padding: 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -963,6 +971,7 @@ h2 {
   .product-row,
   .dispute-row {
     grid-template-columns: minmax(180px, 1.2fr) repeat(5, minmax(84px, .7fr)) minmax(180px, 1fr);
+    min-width: 860px;
   }
 
   .dispute-layout,
@@ -1029,6 +1038,7 @@ h2 {
   .product-row,
   .dispute-row {
     grid-template-columns: 1fr;
+    min-width: 0;
     gap: 10px;
     align-items: stretch;
   }
@@ -1109,5 +1119,158 @@ h2 {
     width: calc(100vw - 20px);
     max-height: calc(100dvh - 20px);
     padding: 16px;
+  }
+}
+
+/* Responsive type and wrapping pass */
+.console-shell,
+.panel,
+.product-row,
+.dispute-row,
+.message-item,
+.listing-card,
+.agent-card,
+.escrow-card,
+.modal {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+h1 {
+  font-size: 4.25rem;
+  line-height: 1.02;
+}
+
+h2 {
+  font-size: 2.625rem;
+  line-height: 1.08;
+}
+
+h3 {
+  line-height: 1.15;
+}
+
+p,
+label,
+input,
+select,
+textarea,
+.topbar-subtitle,
+.form-note,
+.product-row,
+.message-item,
+.detail-grid,
+.timeline-item {
+  line-height: 1.45;
+}
+
+.primary-button,
+.quiet-button,
+.danger-button,
+.console-nav button,
+.control-list button,
+.row-actions button,
+.dispute-actions button,
+.dispute-resolution-actions button,
+.message-actions button {
+  min-width: 0;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.18;
+  min-height: 44px;
+}
+
+.product-row strong,
+.product-row span,
+.product-row small,
+.message-meta span,
+.detail-grid p,
+.timeline-item,
+.audit-item,
+.api-key-item,
+.review-item,
+.ledger-item,
+.order-item {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1024px) {
+  h1 {
+    font-size: 3.5rem;
+  }
+
+  h2 {
+    font-size: 2.25rem;
+  }
+
+  .topbar-subtitle {
+    font-size: 1rem;
+  }
+
+  .panel-title {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.75rem;
+    line-height: 1.05;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  h3 {
+    font-size: 1.125rem;
+  }
+
+  .topbar-subtitle,
+  p,
+  label,
+  input,
+  select,
+  textarea {
+    font-size: 1rem;
+  }
+
+  .product-row,
+  .dispute-row,
+  .message-item {
+    font-size: .95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 2.25rem;
+  }
+
+  h2 {
+    font-size: 1.625rem;
+  }
+
+  .wallet-total {
+    font-size: 2.4rem;
+  }
+
+  .eyebrow,
+  .panel-title span,
+  article small,
+  .product-row small,
+  .message-meta {
+    font-size: .75rem;
+  }
+
+  .primary-button,
+  .quiet-button,
+  .danger-button,
+  .row-actions button,
+  .dispute-actions button,
+  .dispute-resolution-actions button,
+  .message-actions button {
+    width: 100%;
+    padding-inline: 12px;
   }
 }

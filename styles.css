@@ -1176,3 +1176,118 @@ h3 {
     display: grid;
   }
 }
+
+/* Responsive type and wrapping pass */
+body,
+.site-main,
+.hero,
+.page-hero,
+.feature-card,
+.listing,
+.transaction-card,
+.wallet-panel,
+.doc-card,
+.footer {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+h1 {
+  font-size: 5.5rem;
+  line-height: 1.02;
+}
+
+h2 {
+  font-size: 3.5rem;
+  line-height: 1.06;
+}
+
+h3 {
+  line-height: 1.15;
+}
+
+p,
+a,
+button,
+input,
+textarea,
+select,
+.button,
+.page-hero p,
+.hero-copy p,
+.form-note {
+  line-height: 1.45;
+}
+
+.button,
+.tabs button,
+.menu-button {
+  min-width: 0;
+  white-space: normal;
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  h1 {
+    font-size: 4.25rem;
+  }
+
+  h2 {
+    font-size: 2.75rem;
+  }
+
+  .hero-copy p,
+  .page-hero p {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 3.25rem;
+  }
+
+  h2 {
+    font-size: 2.25rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  p,
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  .button {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1,
+  .page-hero h1 {
+    font-size: 2.45rem;
+  }
+
+  h2,
+  .page-grid h2 {
+    font-size: 1.875rem;
+  }
+
+  .eyebrow,
+  .feature-card span,
+  .listing span,
+  .form-note {
+    font-size: .75rem;
+  }
+
+  .button,
+  .contact-form button,
+  .tabs button {
+    width: 100%;
+    padding-inline: 14px;
+  }
+}

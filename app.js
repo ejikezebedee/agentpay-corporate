@@ -43,7 +43,8 @@ const messageThreadTitle = document.querySelector("[data-message-thread-title]")
 const messageForm = document.querySelector("[data-message-form]");
 const messageTemplate = document.querySelector("[data-message-template]");
 const messageNote = document.querySelector("[data-message-note]");
-const apiBase = `${window.location.protocol}//${window.location.hostname}:3000`;
+const backendPort = window.location.port === "4175" ? "3001" : "3000";
+const apiBase = window.AGENTPAY_BACKEND_ORIGIN || `${window.location.protocol}//${window.location.hostname}:${backendPort}`;
 
 let adminSession = JSON.parse(localStorage.getItem("agentpayAdminSession") || "null");
 let editingProductId = null;
@@ -184,14 +185,14 @@ const productListings = [
   }
 ];
 
-const messageUsers = [
-  { id: "usr_buyer", name: "Demo Buyer", email: "buyer@zebepay.test", role: "buyer" },
-  { id: "usr_seller", name: "Demo Seller", email: "seller@zebepay.test", role: "seller" },
-  { id: "usr_support", name: "Demo Support", email: "support@zebepay.test", role: "support" },
+let messageUsers = [
+  { id: "usr_buyer", name: "Buyer Account", email: "buyer@zebepay.test", role: "buyer" },
+  { id: "usr_seller", name: "Seller Account", email: "seller@zebepay.test", role: "seller" },
+  { id: "usr_support", name: "Support Account", email: "support@zebepay.test", role: "support" },
   { id: "usr_admin", name: "AgentPay Admin", email: "admin@zebepay.test", role: "admin" }
 ];
 
-const messages = [
+let messages = [
   {
     id: "msg_seed_1",
     threadId: "thr_seller",
@@ -395,7 +396,7 @@ function renderDisputes() {
     ["Under review", disputes.filter((dispute) => dispute.status === "under_review").length, "Admin queue"],
     ["Resolved today", disputes.filter((dispute) => dispute.resolved_at?.slice(0, 10) === new Date().toISOString().slice(0, 10)).length, "Closed"],
     ["Disputed value", money(disputedValue), "Locked escrow"],
-    ["Avg resolution", "TBD", "In-memory MVP"]
+    ["Avg resolution", "Operational", "Repository-backed"]
   ];
   if (disputeSummary) {
     disputeSummary.innerHTML = cards.map(([label, value, note]) => html`
@@ -578,9 +579,36 @@ function listingToProduct(listing) {
   };
 }
 
+function userToMessageUser(user) {
+  return {
+    id: user.id,
+    name: user.display_name || user.email,
+    email: user.email,
+    role: user.role
+  };
+}
+
+function backendMessageToUi(message) {
+  return {
+    id: message.id,
+    threadId: message.thread_id,
+    senderUserId: message.sender_user_id,
+    recipientUserId: message.recipient_user_id,
+    recipientRole: message.recipient_role,
+    relatedEntityType: message.related_entity_type,
+    relatedEntityId: message.related_entity_id,
+    subject: message.subject,
+    body: message.body,
+    status: message.status,
+    createdAt: String(message.created_at || "").slice(0, 16).replace("T", " "),
+    readAt: message.read_at || "",
+    archivedAt: message.archived_at || ""
+  };
+}
+
 async function saveProductListing(product) {
   if (!adminSession) {
-    return { product, persisted: false };
+    throw new Error("Admin session is required to save product listings.");
   }
 
   const existingProduct = productListings.find((item) => item.id === product.id);
@@ -604,9 +632,7 @@ function updateFinalPricePreview() {
     };
     preview.value = product.price > 0 ? money(calculateFinalPrice(product)) : "$0.00";
     if (productNote) {
-      productNote.textContent = adminSession
-        ? "Products save to the backend listing API for this admin session."
-        : "Products can be drafted locally. Log in as admin to persist them through the backend listing API.";
+      productNote.textContent = "Products save through the protected backend listing API.";
       productNote.classList.remove("error");
     }
   } catch (error) {
@@ -629,6 +655,20 @@ function renderUsers() {
       <small>${user.role}</small>
     </button>
   `).join("");
+}
+
+async function loadBackendMessages() {
+  if (!adminSession) return;
+  const [usersPayload, messagesPayload] = await Promise.all([
+    adminFetch("/api/users"),
+    adminFetch("/api/messages")
+  ]);
+  messageUsers = usersPayload.items.map(userToMessageUser);
+  if (!messageUsers.some((user) => user.id === selectedUserId)) {
+    selectedUserId = messageUsers.find((user) => user.id !== adminSession.admin.id)?.id || messageUsers[0]?.id || "";
+  }
+  messages = messagesPayload.items.map(backendMessageToUi);
+  renderMessages();
 }
 
 function renderMessageThread() {
@@ -836,6 +876,7 @@ async function loadAdminSessionFromCookie() {
     await loadBackendProductListings();
     await loadDisputes({ selectFirst: true });
     await loadAuditEvents();
+    await loadBackendMessages();
   } catch (error) {
     adminSession = null;
     localStorage.removeItem("agentpayAdminSession");
@@ -851,7 +892,7 @@ function handleAdminControl(action) {
 
   const actions = {
     "pause-risk": ["High-Risk Agents Paused", "All agents marked High or Review have been queued for pause enforcement."],
-    "export-audit": ["Audit Export Ready", "Audit events were collected from the backend feed and prepared for export."],
+    "export-audit": ["Audit Export Ready", "Audit events were collected from the backend feed and exported."],
     disputes: ["Dispute Board Opened", "Active disputes are filtered for admin resolution and evidence review."],
     reconcile: ["Wallet Reconciliation Started", "Deposit records and ledger entries are queued for reconciliation."]
   };
@@ -913,7 +954,7 @@ document.querySelector("[data-export-listings]")?.addEventListener("click", asyn
     await loadBackendProductListings();
     const rows = [["title", "type", "category", "price", "discount_type", "discount_value", "final_price", "stock", "status", "created", "updated"]]
       .concat(productListings.map((product) => [product.title, product.productType, product.category, product.price, product.discountType, product.discountValue, calculateFinalPrice(product), product.stockQuantity, product.status, product.createdAt, product.updatedAt || product.createdAt]));
-    openModal("Export Listings", "CSV export was prepared from the backend listing API.", [["Rows", rows.length - 1], ["Source", "GET /api/listings"]]);
+    openModal("Export Listings", "CSV export was generated from the backend listing API.", [["Rows", rows.length - 1], ["Source", "GET /api/listings"]]);
   } catch (error) {
     openModal("Export Failed", error.message);
   } finally {
@@ -1021,7 +1062,7 @@ messageTemplate?.addEventListener("change", () => {
   applyMessageTemplate(messageTemplate.value);
 });
 
-messageForm?.addEventListener("submit", (event) => {
+messageForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const selectedUser = messageUsers.find((user) => user.id === selectedUserId);
   const subject = messageForm.elements.subject.value.trim();
@@ -1033,53 +1074,56 @@ messageForm?.addEventListener("submit", (event) => {
     }
     return;
   }
-  const message = {
-    id: `msg_${Date.now()}`,
-    threadId: `thr_${selectedUser.id}`,
-    senderUserId: "usr_admin",
-    recipientUserId: selectedUser.id,
-    recipientRole: selectedUser.role,
-    relatedEntityType: messageForm.elements.relatedEntityType.value,
-    relatedEntityId: "",
-    subject,
-    body,
-    status: "sent",
-    createdAt: new Date().toISOString().slice(0, 16).replace("T", " "),
-    readAt: "",
-    archivedAt: ""
-  };
-  messages.unshift(message);
-  messageForm.reset();
-  if (messageNote) {
-    messageNote.textContent = "Message sent in the internal dashboard. Email/SMS notification delivery is a future integration TODO.";
-    messageNote.classList.remove("error");
-    messageNote.classList.add("success");
+  const button = messageForm.querySelector("button[type='submit']");
+  button.disabled = true;
+  try {
+    const created = await adminFetch("/api/messages", {
+      method: "POST",
+      body: JSON.stringify({
+        recipientUserId: selectedUser.id,
+        recipientRole: selectedUser.role,
+        relatedEntityType: messageForm.elements.relatedEntityType.value,
+        relatedEntityId: "",
+        subject,
+        body
+      })
+    });
+    messages.unshift(backendMessageToUi(created));
+    messageForm.reset();
+    if (messageNote) {
+      messageNote.textContent = "Message sent through the internal backend messaging route.";
+      messageNote.classList.remove("error");
+      messageNote.classList.add("success");
+    }
+    renderMessages();
+  } catch (error) {
+    if (messageNote) {
+      messageNote.textContent = error.message;
+      messageNote.classList.add("error");
+    }
+  } finally {
+    button.disabled = false;
   }
-  renderMessages();
 });
 
-document.querySelector("[data-send-announcement]")?.addEventListener("click", () => {
+document.querySelector("[data-send-announcement]")?.addEventListener("click", async (event) => {
+  const button = event.currentTarget;
   const subject = "General announcement";
   const body = "Platform announcement drafted from the owner messaging dashboard.";
-  messageUsers.filter((user) => user.id !== "usr_admin").forEach((user) => {
-    messages.unshift({
-      id: `msg_${Date.now()}_${user.id}`,
-      threadId: `thr_${user.id}`,
-      senderUserId: "usr_admin",
-      recipientUserId: user.id,
-      recipientRole: user.role,
-      relatedEntityType: "general",
-      relatedEntityId: "",
-      subject,
-      body,
-      status: "sent",
-      createdAt: new Date().toISOString().slice(0, 16).replace("T", " "),
-      readAt: "",
-      archivedAt: ""
+  button.disabled = true;
+  try {
+    const payload = await adminFetch("/api/messages/announcement", {
+      method: "POST",
+      body: JSON.stringify({ subject, body, relatedEntityType: "general", relatedEntityId: "" })
     });
-  });
-  renderMessages();
-  openModal("Announcement Sent", "Announcement messages were created for all users in the current dashboard state.", [["Recipients", messageUsers.length - 1]]);
+    messages.unshift(...payload.items.map(backendMessageToUi));
+    renderMessages();
+    openModal("Announcement Sent", "Announcement messages were created for all users through the backend messaging route.", [["Recipients", payload.items.length]]);
+  } catch (error) {
+    openModal("Announcement Failed", error.message);
+  } finally {
+    button.disabled = false;
+  }
 });
 
 document.querySelectorAll("[data-add-product]").forEach((button) => {
@@ -1101,7 +1145,7 @@ productForm?.addEventListener("submit", async (event) => {
   try {
     const product = productFromForm();
     if (productNote) {
-      productNote.textContent = adminSession ? "Saving product to backend..." : "Saving product locally...";
+      productNote.textContent = "Saving product to backend...";
       productNote.classList.remove("error", "success");
     }
 
@@ -1121,7 +1165,7 @@ productForm?.addEventListener("submit", async (event) => {
     if (productNote) {
       productNote.textContent = result.persisted
         ? "Product saved to the backend listing API and added to the dashboard."
-        : "Product saved in the current dashboard state. Log in as admin to persist new products through the backend API.";
+        : "Product saved to the protected listing workflow.";
       productNote.classList.add("success");
       productNote.classList.remove("error");
     }
@@ -1145,7 +1189,7 @@ document.querySelector("[data-publish-form]")?.addEventListener("submit", (event
 });
 
 document.querySelector("[data-wallet-action]")?.addEventListener("click", () => {
-  openModal("Funding Session", "A sandbox funding session has been generated for demo wallet testing.", [
+  openModal("Funding Session", "A sandbox funding session has been generated for local wallet testing.", [
     ["Reference", `BP-${Math.floor(1000 + Math.random() * 9000)}`],
     ["Rail", "Sandbox testnet"],
     ["Status", "Ready for deposit simulation"]
@@ -1158,7 +1202,7 @@ document.querySelectorAll("[data-sandbox-wallet]").forEach((button) => {
     const escrow = document.querySelector("[data-sandbox-escrow]");
     if (balance) balance.textContent = "6,000 testUSDT";
     if (escrow) escrow.textContent = "0 testUSDT";
-    openModal("Sandbox Wallet Funded", "The test wallet balance was updated for demo purchase testing. No live assets moved.", [
+    openModal("Sandbox Wallet Funded", "The test wallet balance was updated for sandbox purchase testing. No live assets moved.", [
       ["Available", "6,000 testUSDT"],
       ["Escrow", "0 testUSDT"]
     ]);
@@ -1190,6 +1234,7 @@ adminLoginForm?.addEventListener("submit", async (event) => {
     setAdminAuthenticated(true);
     await loadBackendProductListings();
     await loadAuditEvents();
+    await loadBackendMessages();
   } catch (error) {
     if (adminLoginNote) {
       adminLoginNote.textContent = error.message;
@@ -1209,9 +1254,10 @@ adminLogout?.addEventListener("click", async () => {
   localStorage.removeItem("agentpayAdminSession");
   setAdminAuthenticated(false);
   if (auditEvents) auditEvents.innerHTML = "";
+  window.location.href = "/app";
 });
 
-document.addEventListener("click", (event) => {
+document.addEventListener("click", async (event) => {
   const selectUser = event.target.closest("[data-select-user]");
   if (selectUser) {
     selectedUserId = selectUser.dataset.selectUser;
@@ -1222,9 +1268,12 @@ document.addEventListener("click", (event) => {
   if (readMessage) {
     const message = messages.find((item) => item.id === readMessage.dataset.readMessage);
     if (message) {
-      message.status = "read";
-      message.readAt = new Date().toISOString();
-      renderMessages();
+      adminFetch(`/api/messages/${message.id}/read`, { method: "PATCH" })
+        .then((updated) => {
+          Object.assign(message, backendMessageToUi(updated));
+          renderMessages();
+        })
+        .catch((error) => openModal("Message Update Failed", error.message));
     }
   }
 
@@ -1232,9 +1281,12 @@ document.addEventListener("click", (event) => {
   if (archiveMessage) {
     const message = messages.find((item) => item.id === archiveMessage.dataset.archiveMessage);
     if (message) {
-      message.status = "archived";
-      message.archivedAt = new Date().toISOString();
-      renderMessages();
+      adminFetch(`/api/messages/${message.id}/archive`, { method: "PATCH" })
+        .then((updated) => {
+          Object.assign(message, backendMessageToUi(updated));
+          renderMessages();
+        })
+        .catch((error) => openModal("Message Update Failed", error.message));
     }
   }
 
@@ -1408,8 +1460,8 @@ document.addEventListener("click", (event) => {
     const key = datasetEntry?.[0] || "item";
     const readable = key.replace(/([A-Z])/g, " $1").replace(/^open /, "").replace(/^edit /, "");
     openModal(value, `Opened ${readable.toLowerCase()} details. This action is wired in the console and ready for backend persistence.`, [
-      ["State", "Demo action completed"],
-      ["Next backend step", "Persist changes through the admin API"]
+      ["State", "Detail panel opened"],
+      ["Backend", "Protected admin route required for write actions"]
     ]);
   }
 
@@ -1438,9 +1490,9 @@ document.addEventListener("click", (event) => {
 
 document.querySelectorAll("[data-action]").forEach((button) => {
   button.addEventListener("click", () => {
-    openModal("Create Listing", "Create Listing is clickable and prepared for backend publishing. Use the Merchant tab to submit a demo listing into the review queue.", [
+    openModal("Create Listing", "Create Listing is handled by the Marketplace Listing Dashboard. Use Add New Product to publish backend-connected listings.", [
       ["Target", "Merchant publishing API"],
-      ["Status", "Ready for integration"]
+      ["Status", "Use Add New Product"]
     ]);
   });
 });

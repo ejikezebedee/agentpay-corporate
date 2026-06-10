@@ -10,6 +10,7 @@ import { loadConfig } from "./config.js";
 import { buildSandboxClientEnvironment } from "./sandbox.js";
 import { MemoryAgentPayRepository } from "./domain/memoryRepository.js";
 import { DISCOUNT_TYPES, DISPUTE_STATUS, RELATED_ENTITY_TYPES, ROLES } from "./domain/models.js";
+import { createPaymentProvider } from "./payments.js";
 
 async function readRawBody(request) {
   const chunks = [];
@@ -157,6 +158,43 @@ export function createAgentPayServer() {
 
     if (request.method === "GET" && url.pathname === "/api/v1/listings") {
       return send(response, 200, { items: catalog });
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/public/listings") {
+      const items = appRepository.listListings({ includeArchived: false })
+        .filter((listing) => listing.status === "active")
+        .map((listing) => ({
+          id: listing.id,
+          title: listing.title,
+          description: listing.description,
+          category: listing.category,
+          product_type: listing.product_type,
+          price: listing.price,
+          currency: listing.currency,
+          discount_type: listing.discount_type,
+          discount_value: listing.discount_value,
+          final_price: listing.final_price,
+          status: listing.status,
+          created_at: listing.created_at,
+          updated_at: listing.updated_at
+        }));
+      return send(response, 200, { items });
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/contact-requests") {
+      const body = parseJson(await readRawBody(request));
+      const email = String(body.email || "").trim();
+      const name = String(body.name || "").trim();
+      const message = String(body.message || body.company || body.use_case || "").trim();
+      if (!email || !email.includes("@")) return sendError(response, 400, "Valid email is required");
+      appRepository.appendAuditEvent({
+        action: "contact_request_received",
+        entityType: "contact_request",
+        entityId: email,
+        ipAddress: getIpAddress(request),
+        metadata: { name, message: message.slice(0, 500) }
+      });
+      return send(response, 201, { ok: true, status: "received" });
     }
 
     if (request.method === "GET" && url.pathname === "/api/v1/sandbox/client-environment") {
@@ -479,7 +517,7 @@ export function createAgentPayServer() {
           evidenceType: body.evidenceType || body.evidence_type || "other",
           title: body.title,
           description: body.description,
-          fileUrlOrPlaceholder: body.fileUrlOrPlaceholder || body.file_url_or_placeholder || ""
+          fileUrlOrStorageKey: body.fileUrlOrStorageKey || body.file_url_or_storage_key || ""
         });
         recordAuditEvent({ request, session, action: "dispute_evidence_added", entityType: "dispute", entityId: disputeId, metadata: { evidence_id: evidence.id } });
         return send(response, 201, evidence);
@@ -768,8 +806,11 @@ export function createAgentPayServer() {
         userId: session.userId,
         amount: body.amount,
         currency: body.currency || "USDT",
+        provider: body.provider || "mock_sandbox",
         idempotencyKey: request.headers["idempotency-key"]
       });
+      const provider = createPaymentProvider({ provider: result.deposit.provider, config });
+      const providerSession = await provider.createDepositRequest({ deposit: result.deposit });
       appRepository.appendAuditEvent({
         actorUserId: session.userId,
         actorRole: session.role,
@@ -779,7 +820,7 @@ export function createAgentPayServer() {
         ipAddress: getIpAddress(request),
         metadata: { amount: result.deposit.amount, currency: result.deposit.currency, status: result.deposit.status }
       });
-      return send(response, result.reused ? 200 : 201, result.deposit);
+      return send(response, result.reused ? 200 : 201, { ...result.deposit, provider_session: providerSession });
     }
 
     if (request.method === "POST" && url.pathname === "/api/v1/sandbox/deposits/confirm") {

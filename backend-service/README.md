@@ -1,6 +1,6 @@
-# AgentPay Backend Service Starter
+# AgentPay Backend Service
 
-This starter is a dependency-free Node.js API skeleton for the AgentPay MVP backend. It is designed to prove route shape, strict money validation, signed agent requests, idempotent order creation, escrow state transitions, audit events, and Binance Pay webhook signature verification before connecting real PostgreSQL, MongoDB, Redis, auth, or payment providers.
+This dependency-free Node.js API powers the AgentPay website. It provides protected sessions, listing management, internal messages, disputes, escrow settlement, wallet ledger entries, audit events, public marketplace listings, contact requests, sandbox deposits, and payment provider boundaries for Binance Pay deployment.
 
 ## Run Locally
 
@@ -13,12 +13,14 @@ The server listens on `PORT` or `3000`.
 
 Copy `.env.example` to `.env` for local development. Keep real secrets in the deployment secret manager, not in source control.
 
-## Implemented Starter Routes
+## Implemented Routes
 
 - `GET /health`
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
 - `GET /api/auth/session`
+- `GET /api/public/listings`
+- `POST /api/contact-requests`
 - `GET /api/listings`
 - `GET /api/listings/:id`
 - `POST /api/listings`
@@ -59,9 +61,9 @@ Copy `.env.example` to `.env` for local development. Keep real secrets in the de
 - `GET /api/v1/admin/audit-events`
 - `GET /api/v1/admin/review-queue`
 
-## Stage 1 Domain and Auth Layer
+## Domain And Auth Layer
 
-Stage 1 keeps the current dependency-free Node.js backend and introduces a clean domain/repository layer that runs in memory for local MVP testing. It is not durable storage. The repository boundary is intentionally separate so PostgreSQL can replace the in-memory implementation later.
+The backend uses a clean domain/repository layer that can run in memory for local testing. That adapter is not durable storage. The repository boundary is intentionally separate so PostgreSQL can replace the local adapter for hosted production.
 
 Implemented domain models:
 
@@ -73,24 +75,10 @@ Implemented domain models:
 - escrow orders
 - admin reviews
 - audit events
+- dispute cases and timeline records
+- internal message threads
 
-Protected routes require `Authorization: Bearer <session-token>`. Admin routes require an authenticated user with the `admin` role; buyer, seller, and support tokens are rejected from admin-only routes.
-
-Admin login for the local console remains available at `POST /api/v1/admin/login`. It returns a role-bearing session token for admin routes.
-
-Stage A adds the server-side dashboard lock used by the static preview server. `/app` is not served unless the request includes a valid HTTP-only `agentpay_admin_session` cookie. The login page posts to `POST /api/auth/login`, which verifies a PBKDF2 password hash and issues the cookie plus a role-bearing token for API clients.
-
-Required local environment variables for production-like testing:
-
-- `ADMIN_USERNAME`
-- `ADMIN_PASSWORD_HASH`
-- `ADMIN_SESSION_SECRET`
-- `AGENTPAY_ADMIN_EMAIL`
-- `AGENTPAY_ADMIN_PASSWORD`
-- `AGENTPAY_ADMIN_TOKEN_SECRET`
-- `AGENTPAY_SESSION_TOKEN_SECRET`
-
-Use generated values for token secrets outside local development. Do not expose these values to frontend code. The local development username is `admin@zebepay.test`; the repository stores only a PBKDF2 hash fallback for the demo password. In production, set `ADMIN_PASSWORD_HASH` and do not rely on defaults.
+Protected routes require `Authorization: Bearer <session-token>` or the HTTP-only `agentpay_admin_session` cookie where applicable. Admin routes require an authenticated user with the `admin` role; buyer, seller, and support tokens are rejected from admin-only routes.
 
 ## Sandbox Wallet Top-Up Test Flow
 
@@ -100,7 +88,7 @@ Create a pending sandbox deposit as a buyer:
 curl -X POST http://127.0.0.1:3000/api/v1/sandbox/deposits \
   -H "Authorization: Bearer <buyer-session-token>" \
   -H "Content-Type: application/json" \
-  -H "Idempotency-Key: deposit-demo-0001" \
+  -H "Idempotency-Key: deposit-local-0001" \
   -d "{\"amount\":\"25.00\",\"currency\":\"USDT\"}"
 ```
 
@@ -110,104 +98,60 @@ Confirm the deposit through the mock webhook route as an admin or support user:
 curl -X POST http://127.0.0.1:3000/api/v1/sandbox/deposits/confirm \
   -H "Authorization: Bearer <admin-session-token>" \
   -H "Content-Type: application/json" \
-  -H "Idempotency-Key: webhook-demo-0001" \
+  -H "Idempotency-Key: webhook-local-0001" \
   -d "{\"deposit_id\":\"<deposit-id>\"}"
 ```
 
 The first confirmation credits the wallet available account through an immutable ledger entry. Reusing the same webhook idempotency key returns the confirmed deposit without creating another ledger entry.
 
-## Stage 1 Tests
+## Payment Providers
+
+`src/payments.js` defines:
+
+- `PaymentProvider`
+- `MockSandboxProvider`
+- `BinancePayProvider`
+- `createPaymentProvider`
+
+The mock provider is complete for local sandbox funding. The Binance adapter is credential-driven and intentionally reads credentials from environment variables only. TODO comments mark the exact places where production signing and webhook verification must be reviewed against the current official Binance Pay documentation before live money movement.
+
+## Tests
 
 ```bash
 npm test
 ```
 
-The Stage 1 tests cover:
+The tests cover:
 
-- non-admin rejection from admin routes
+- admin and non-admin route access
 - buyer wallet summary access
 - pending sandbox deposit creation
 - idempotent sandbox webhook confirmation
 - immutable ledger reads
 - negative balance rejection
+- listing CRUD, discounts, status changes, and archive behavior
+- public marketplace listing visibility
+- dispute decision and settlement flows
+- internal messaging and announcements
+- contact request audit events
+- payment provider behavior
 - audit event creation
-
-## Listing Management Routes
-
-The seller/admin listing dashboard uses these protected routes:
-
-- `GET /api/listings` returns non-archived listings for the authenticated seller, or all non-archived listings for admins.
-- `GET /api/listings/:id` returns one owned/admin-visible listing.
-- `POST /api/listings` creates a listing after validating title, description, category, product type, price, discount, stock, delivery fields, and status.
-- `PATCH /api/listings/:id` updates editable listing fields, recalculates final price, and audits status or discount changes.
-- `PATCH /api/listings/:id/status` changes listing status.
-- `PATCH /api/listings/:id/discount` adds, updates, or removes listing discounts.
-- `DELETE /api/listings/:id` soft-deletes by setting status to `archived`; it does not hard-delete records.
-
-Server-side validation rejects discounts that make final price zero or negative. Listing audit actions include `listing_created`, `listing_updated`, `listing_archived`, `listing_discount_added`, `listing_discount_removed`, and `listing_status_changed`.
-
-## Dispute Management Routes
-
-Stage B adds admin/support dispute management connected to escrow and wallet ledger primitives.
-
-- `GET /api/disputes` lists all disputes for admin/support.
-- `GET /api/disputes/:id` opens a dispute detail record with evidence and timeline.
-- `PATCH /api/disputes/:id/status` moves controlled dispute statuses such as `under_review`.
-- `POST /api/disputes/:id/request-evidence` requests buyer or seller evidence.
-- `POST /api/disputes/:id/message` sends an internal dispute message with `related_entity_type = dispute`.
-- `POST /api/disputes/:id/admin-note` adds an internal note.
-- `POST /api/disputes/:id/refund` moves locked escrow funds back to the buyer available wallet through ledger entries.
-- `POST /api/disputes/:id/release` moves locked escrow funds to the seller available wallet through ledger entries.
-- `POST /api/disputes/:id/partial-refund` splits locked escrow between buyer refund and seller release.
-- `POST /api/disputes/:id/escalate` and `POST /api/disputes/:id/close` update case status.
-
-Resolution routes require an `Idempotency-Key` header. Duplicate resolution keys do not double-move funds. Resolved or closed disputes reject further money movement.
-
-Dispute audit actions include `dispute_opened`, `dispute_viewed`, `dispute_status_changed`, `dispute_evidence_added`, `dispute_message_sent`, `dispute_evidence_requested`, `dispute_admin_note_added`, `dispute_escalated`, `dispute_refund_issued`, `dispute_escrow_released`, `dispute_partial_refund_issued`, `dispute_closed`, `duplicate_dispute_resolution_rejected`, and `unauthorized_dispute_access_rejected`.
-
-## Internal Messaging Routes
-
-The owner/admin messaging dashboard is internal only. It does not send email, SMS, WhatsApp, or external notifications yet.
-
-- `GET /api/users` lists users for admin/support recipient search.
-- `GET /api/messages` lists visible messages for the authenticated user.
-- `GET /api/messages/:threadId` returns a thread when the user participates in it, or when the user is admin/support.
-- `POST /api/messages` sends a direct internal message. Stage 1 allows admin/support direct sends.
-- `PATCH /api/messages/:id/read` marks a visible message as read.
-- `PATCH /api/messages/:id/archive` archives a visible message.
-- `POST /api/messages/announcement` sends an internal announcement to all users except the sender.
-
-Message validation rejects empty subjects or bodies and enforces subject/body length limits. A basic in-memory rate-limit placeholder is present for future anti-spam enforcement. TODO: add durable delivery queues and optional email notification integration.
 
 ## Production Repository Pack
 
+- `database/schema.sql` and `database/migrations/` define the PostgreSQL foundation.
 - `src/repositories/postgresSettlementRepository.js` contains transaction-safe order, escrow, ledger, and audit-log repository flow.
 - `src/repositories/sql/` contains PostgreSQL query modules that cast money through `money_amount`.
 - `src/repositories/mongoListingRepository.js` contains the MongoDB listing discovery adapter.
-- `docs/PRODUCTION_API_SERVER.md` defines the deployment gate and API server wiring order.
 
-## Dedicated API Server Pack
+## Implement Before Production Traffic
 
-- `Dockerfile` and `docker-compose.example.yml` provide the container path.
-- `infra/nginx/api.zebepay.com.conf` provides the reverse proxy template.
-- `infra/systemd/agentpay-api.service` provides the direct Node.js service template.
-- `infra/scripts/healthcheck.sh` verifies the public API health route.
-- `infra/scripts/backup-databases.sh` provides starter database backup commands.
-- `docs/API_SERVER_PROVISIONING_PLAN.md` defines the dedicated `api.zebepay.com` provisioning sequence.
-
-## Deployment Bundle
-
-- `.env.production.example` defines production environment variables without real secrets.
-- `infra/deploy/` includes target-server scripts for provisioning, migrations, MongoDB seed import, smoke testing, and rollback.
-- `docs/API_SERVER_DEPLOYMENT_BUNDLE.md` explains the release flow and launch gate.
-
-## Implement Before Production
-
-- Replace in-memory storage with PostgreSQL repositories for users, wallets, orders, ledger entries, deposits, disputes, audit logs, and listing settlement records.
-- Replace listing catalog loading with MongoDB discovery reads plus PostgreSQL settlement joins.
-- Replace starter HMAC auth with production API-key hashing, scoped permissions, rate limits, structured logs, and secure sessions.
-- Keep Binance Pay webhook signature verification enabled before reconciliation.
-- Use Redis or a durable queue for webhook, reconciliation, and delivery workers.
+- Enable PostgreSQL-backed storage for users, sessions, listings, wallets, orders, ledger entries, deposits, disputes, messages, audit logs, and webhook records.
+- Add durable file/object storage for digital products and dispute evidence.
+- Replace local development credentials with environment-backed secrets.
+- Complete Binance Pay sandbox testing and official production signature verification review.
+- Add production API-key hashing, scoped permissions, CSRF controls, rate limits, structured logs, secure sessions, and observability.
+- Use Redis or a durable queue for webhook, reconciliation, and delivery workers where needed.
 
 ## Non-Negotiable Money Rule
 

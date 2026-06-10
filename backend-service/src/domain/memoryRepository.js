@@ -170,9 +170,9 @@ export class MemoryAgentPayRepository {
 
   seed() {
     const admin = this.createUser({ id: "usr_admin", email: "admin@zebepay.test", displayName: "AgentPay Admin", role: ROLES.ADMIN });
-    const buyer = this.createUser({ id: "usr_buyer", email: "buyer@zebepay.test", displayName: "Demo Buyer", role: ROLES.BUYER });
-    const seller = this.createUser({ id: "usr_seller", email: "seller@zebepay.test", displayName: "Demo Seller", role: ROLES.SELLER });
-    this.createUser({ id: "usr_support", email: "support@zebepay.test", displayName: "Demo Support", role: ROLES.SUPPORT });
+    const buyer = this.createUser({ id: "usr_buyer", email: "buyer@zebepay.test", displayName: "Buyer Account", role: ROLES.BUYER });
+    const seller = this.createUser({ id: "usr_seller", email: "seller@zebepay.test", displayName: "Seller Account", role: ROLES.SELLER });
+    this.createUser({ id: "usr_support", email: "support@zebepay.test", displayName: "Support Account", role: ROLES.SUPPORT });
 
     this.createWallet({ id: "wal_buyer_usdt", userId: buyer.id, currency: "USDT" });
     this.createWallet({ id: "wal_seller_usdt", userId: seller.id, currency: "USDT" });
@@ -181,7 +181,7 @@ export class MemoryAgentPayRepository {
     this.createListing({
       id: "lst_demo_digital",
       sellerUserId: seller.id,
-      title: "Demo Digital Product",
+      title: "AgentPay Integration Pack",
       description: "Downloadable starter package for integration testing.",
       productType: "digital",
       category: "Development",
@@ -199,7 +199,7 @@ export class MemoryAgentPayRepository {
     this.createListing({
       id: "lst_demo_physical",
       sellerUserId: seller.id,
-      title: "Demo Hardware Kit",
+      title: "Merchant Hardware Kit",
       description: "Physical onboarding kit for enterprise deployment pilots.",
       productType: "physical",
       category: "Hardware",
@@ -280,7 +280,7 @@ export class MemoryAgentPayRepository {
       senderUserId: admin.id,
       recipientUserId: seller.id,
       subject: "Listing approved",
-      body: "Your demo digital product is ready for marketplace testing.",
+      body: "Your digital product is ready for marketplace publishing.",
       relatedEntityType: RELATED_ENTITY_TYPES.LISTING,
       relatedEntityId: "lst_demo_digital"
     });
@@ -649,7 +649,7 @@ export class MemoryAgentPayRepository {
     return this.decorateDispute(dispute);
   }
 
-  addDisputeEvidence({ disputeId, uploadedByUserId, uploadedByRole, evidenceType = DISPUTE_EVIDENCE_TYPES.OTHER, title, description, fileUrlOrPlaceholder = "" }) {
+  addDisputeEvidence({ disputeId, uploadedByUserId, uploadedByRole, evidenceType = DISPUTE_EVIDENCE_TYPES.OTHER, title, description, fileUrlOrStorageKey = "" }) {
     const dispute = this.disputes.get(disputeId);
     if (!dispute) throw new Error("Dispute not found");
     const evidence = {
@@ -660,7 +660,7 @@ export class MemoryAgentPayRepository {
       evidence_type: assertEnum(evidenceType, DISPUTE_EVIDENCE_TYPES, "Evidence type"),
       title: assertNonEmptyString(title, "Evidence title"),
       description: normalizeTextLength(description, "Evidence description", { min: 1, max: 1000 }),
-      file_url_or_placeholder: String(fileUrlOrPlaceholder || ""),
+      file_url_or_storage_key: String(fileUrlOrStorageKey || ""),
       created_at: this.now().toISOString()
     };
     this.disputeEvidence.set(evidence.id, evidence);
@@ -830,7 +830,7 @@ export class MemoryAgentPayRepository {
     const key = `${senderUserId}:${this.now().toISOString().slice(0, 16)}`;
     const count = this.messageRateLimit.get(key) || 0;
     if (count >= 30) {
-      throw new Error("Message rate limit placeholder exceeded");
+      throw new Error("Message rate limit guard exceeded");
     }
     this.messageRateLimit.set(key, count + 1);
   }

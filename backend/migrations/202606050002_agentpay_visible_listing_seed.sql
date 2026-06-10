@@ -7,7 +7,7 @@ begin;
 insert into users (id, email, display_name, password_hash, kyc_tier, status)
 values (
   '00000000-0000-4000-8000-000000000001',
-  'seed-merchant-contact-placeholder',
+  'seed-merchant@agentpay.local',
   'AgentPay Seed Merchant',
   'seed-password-disabled',
   1,

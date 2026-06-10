@@ -64,6 +64,12 @@ Response:
 
 ## Listings
 
+### GET `/api/public/listings`
+
+Purpose: list active public marketplace products. Archived listings are excluded.
+
+Auth: none.
+
 ### GET `/api/listings`
 
 Purpose: list seller/admin marketplace listings. Add `?include_archived=true` for archived listings.
@@ -73,7 +79,7 @@ Auth: seller or admin.
 Response:
 
 ```json
-{ "items": [{ "id": "lst_demo_digital", "title": "Demo Digital Product", "status": "active" }] }
+{ "items": [{ "id": "lst_demo_digital", "title": "Digital Product", "status": "active" }] }
 ```
 
 ### GET `/api/listings/:id`
@@ -302,7 +308,7 @@ Auth: admin or support.
 
 ## Messages
 
-General internal message routes still exist:
+General internal message routes:
 
 - `GET /api/users`
 - `GET /api/messages`
@@ -312,7 +318,25 @@ General internal message routes still exist:
 - `PATCH /api/messages/:id/archive`
 - `POST /api/messages/announcement`
 
-Stage B only requires dispute-connected messaging from `/api/disputes/:id/message`.
+Internal messaging is stored in-app. External email, SMS, WhatsApp, and push delivery can be attached through provider integrations.
+
+## Contact Requests
+
+### POST `/api/contact-requests`
+
+Purpose: store a public/private-beta contact request and create an audit event.
+
+Auth: none.
+
+Request:
+
+```json
+{
+  "name": "Site owner",
+  "email": "owner@example.com",
+  "message": "I want access."
+}
+```
 
 ## Wallet and Audit
 
@@ -321,10 +345,17 @@ Stage B only requires dispute-connected messaging from `/api/disputes/:id/messag
 - `GET /api/v1/admin/audit-events`: admin audit feed.
 - `GET /api/v1/admin/review-queue`: admin review queue.
 
-## Future Binance Pay / Stage D
+## Payment Providers And Webhooks
 
-Existing scaffold:
+Implemented payment provider pieces:
+
+- `PaymentProvider` interface.
+- `MockSandboxProvider` for local sandbox funding.
+- `BinancePayProvider` adapter that reads credentials from environment variables.
+- Pending deposit creation through `POST /api/v1/sandbox/deposits`.
+- Idempotent mock webhook confirmation through `POST /api/v1/sandbox/deposits/confirm`.
+- Binance webhook receiver:
 
 - `POST /api/v1/webhooks/binance-pay`
 
-Stage D still needs PaymentProvider abstraction, mock sandbox provider, Binance Pay checkout request flow, payment webhook records, reconciliation UI, and official production signature verification review against current Binance Pay documentation.
+The Binance adapter intentionally requires final production signature and webhook verification review against current official Binance Pay documentation before live credentials are used.

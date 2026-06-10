@@ -1,4 +1,4 @@
--- AgentPay MVP database blueprint
+-- AgentPay fully functioning website database blueprint
 -- Target: PostgreSQL 15+
 -- Purpose: internal ledger, escrow, marketplace, agent permissions, admin audit.
 
@@ -176,3 +176,164 @@ create index idx_orders_status on orders(status, created_at desc);
 create index idx_ledger_wallet on ledger_entries(wallet_id, created_at desc);
 create index idx_audit_subject on audit_logs(subject_type, subject_id, created_at desc);
 create index idx_listings_mongo_ref on listings(mongo_listing_id);
+
+-- Full website operational tables for the backend-connected admin dashboard.
+
+create table admin_sessions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id),
+  token_hash text not null unique,
+  expires_at timestamptz not null,
+  revoked_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create table wallet_accounts (
+  id uuid primary key default gen_random_uuid(),
+  wallet_id uuid not null references wallets(id),
+  user_id uuid not null references users(id),
+  currency currency_code not null,
+  account_type text not null check (account_type in ('available', 'pending', 'escrow_locked', 'platform_fee')),
+  created_at timestamptz not null default now(),
+  unique (wallet_id, account_type)
+);
+
+create table immutable_ledger_entries (
+  id uuid primary key default gen_random_uuid(),
+  debit_account_id uuid references wallet_accounts(id),
+  credit_account_id uuid references wallet_accounts(id),
+  amount money_amount not null,
+  currency currency_code not null,
+  entry_type text not null,
+  entity_type text not null,
+  entity_id text not null,
+  idempotency_key text not null unique,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  check (amount > 0),
+  check (debit_account_id is not null or credit_account_id is not null)
+);
+
+create table marketplace_products (
+  id uuid primary key default gen_random_uuid(),
+  seller_user_id uuid not null references users(id),
+  title text not null,
+  description text not null,
+  category text not null,
+  product_type text not null check (product_type in ('digital', 'physical', 'service')),
+  price money_amount not null,
+  currency currency_code not null default 'USDT',
+  discount_type text not null default 'none' check (discount_type in ('none', 'fixed', 'percentage')),
+  discount_value money_amount not null default 0,
+  final_price money_amount not null,
+  image_url text,
+  digital_file_url text,
+  stock_quantity integer not null default 0 check (stock_quantity >= 0),
+  delivery_instructions text,
+  status text not null default 'draft' check (status in ('draft', 'active', 'paused', 'pending_review', 'archived')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table escrow_orders (
+  id uuid primary key default gen_random_uuid(),
+  listing_id text not null,
+  buyer_user_id uuid not null references users(id),
+  seller_user_id uuid not null references users(id),
+  amount money_amount not null,
+  currency currency_code not null,
+  status text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz
+);
+
+create table dispute_cases (
+  id uuid primary key default gen_random_uuid(),
+  order_id text,
+  escrow_order_id uuid not null references escrow_orders(id),
+  listing_id text not null,
+  buyer_user_id uuid not null references users(id),
+  seller_user_id uuid not null references users(id),
+  assigned_admin_user_id uuid references users(id),
+  reason text not null,
+  buyer_claim text,
+  seller_response text,
+  disputed_amount money_amount not null,
+  currency currency_code not null,
+  priority text not null check (priority in ('low', 'normal', 'high', 'critical')),
+  status text not null,
+  resolution_type text,
+  resolution_amount money_amount,
+  admin_note text,
+  evidence_required_from text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  closed_at timestamptz
+);
+
+create table dispute_evidence (
+  id uuid primary key default gen_random_uuid(),
+  dispute_id uuid not null references dispute_cases(id),
+  uploaded_by_user_id uuid references users(id),
+  uploaded_by_role text not null,
+  evidence_type text not null,
+  title text not null,
+  description text not null,
+  file_url_or_storage_key text,
+  created_at timestamptz not null default now()
+);
+
+create table dispute_timeline (
+  id uuid primary key default gen_random_uuid(),
+  dispute_id uuid not null references dispute_cases(id),
+  actor_user_id uuid references users(id),
+  actor_role text,
+  action text not null,
+  message text,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+create table internal_messages (
+  id uuid primary key default gen_random_uuid(),
+  thread_id text not null,
+  sender_user_id uuid not null references users(id),
+  recipient_user_id uuid not null references users(id),
+  recipient_role text not null,
+  related_entity_type text not null,
+  related_entity_id text not null,
+  subject text not null,
+  body text not null,
+  status text not null,
+  created_at timestamptz not null default now(),
+  read_at timestamptz,
+  archived_at timestamptz
+);
+
+create table payment_webhooks (
+  id uuid primary key default gen_random_uuid(),
+  provider text not null,
+  provider_event_id text not null,
+  deposit_id uuid references payment_deposits(id),
+  signature_valid boolean not null default false,
+  idempotency_key text not null unique,
+  raw_payload jsonb not null,
+  processed_at timestamptz,
+  created_at timestamptz not null default now(),
+  unique (provider, provider_event_id)
+);
+
+create table contact_requests (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  email text not null,
+  message text,
+  status text not null default 'received',
+  created_at timestamptz not null default now()
+);
+
+create index idx_marketplace_products_status on marketplace_products(status, created_at desc);
+create index idx_dispute_cases_status on dispute_cases(status, updated_at desc);
+create index idx_messages_related on internal_messages(related_entity_type, related_entity_id, created_at desc);
+create index idx_payment_webhooks_deposit on payment_webhooks(deposit_id, created_at desc);

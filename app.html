@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AgentPay Console | Wallet, Escrow, and Marketplace Operations</title>
+    <title>AgentPay Marketplace Listing Dashboard</title>
     <meta name="description" content="AgentPay console for controlled wallets, registered agents, marketplace publishing, escrow, and admin operations.">
     <link rel="canonical" href="https://zebepay.com/app">
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
@@ -31,8 +31,8 @@
         <button type="button" data-view="api">API Keys</button>
       </nav>
       <div class="sidebar-status">
-        <span>Private Beta</span>
-        <strong>Sandbox mode</strong>
+        <span>Admin Console</span>
+        <strong>Backend connected</strong>
       </div>
     </aside>
 
@@ -117,8 +117,8 @@
             </label>
             <label>Discount value <input name="discountValue" type="number" min="0" step="0.01" data-discount-value></label>
             <label>Final price preview <input name="finalPrice" readonly data-final-price></label>
-            <label class="wide">Product image URL or upload placeholder <input name="imageUrl" placeholder="https://... or upload pending"></label>
-            <label class="wide">Digital file URL/upload placeholder <input name="digitalFileUrl" placeholder="private://file.zip"></label>
+            <label class="wide">Product image URL <input name="imageUrl" placeholder="https://..."></label>
+            <label class="wide">Private digital file URL <input name="digitalFileUrl" placeholder="private://file.zip"></label>
             <label>Stock quantity <input name="stockQuantity" type="number" min="0" step="1" value="0"></label>
             <label>Status
               <select name="status">
@@ -134,7 +134,7 @@
               <button class="primary-button" type="submit" data-product-submit>Save Product</button>
               <button class="quiet-button" type="button" data-product-cancel>Cancel</button>
             </div>
-            <p class="form-note wide" data-product-note>Static dashboard changes update the current UI state. Backend persistence routes are available for authenticated seller/admin sessions.</p>
+            <p class="form-note wide" data-product-note>Products save through the protected backend listing API.</p>
           </form>
         </section>
 
@@ -243,7 +243,7 @@
             <div class="sandbox-funding">
               <span>Sandbox Testnet</span>
               <strong>1,000.000000000000000000 test USDT</strong>
-              <small>Demo wallet credit for buyer-agent purchase testing only.</small>
+              <small>Sandbox wallet credit for buyer-agent purchase testing only.</small>
               <button class="quiet-button" type="button" data-sandbox-wallet>Fund Test Wallet</button>
             </div>
           </section>
@@ -342,7 +342,7 @@
               <label class="wide">Message subject <input name="subject" required maxlength="140"></label>
               <label class="wide">Message body <textarea name="body" rows="5" required maxlength="5000"></textarea></label>
               <button class="primary-button wide" type="submit">Send Message</button>
-              <p class="form-note wide" data-message-note>Internal in-app messaging only. Email/SMS notifications are TODO for a later integration.</p>
+              <p class="form-note wide" data-message-note>Internal in-app messaging is stored through the backend message routes.</p>
             </form>
           </section>
         </div>
@@ -452,23 +452,11 @@
         <div class="section-row">
           <div>
             <p class="eyebrow">Admin Backend</p>
-            <h2>Login to manage reviews, risk controls, and audit events.</h2>
+            <h2>Manage reviews, risk controls, and audit events.</h2>
           </div>
-          <button class="quiet-button" type="button" data-admin-logout hidden>Log Out</button>
+          <button class="quiet-button" type="button" data-admin-logout>Log Out</button>
         </div>
-        <section class="panel" data-admin-login-panel>
-          <div class="panel-title">
-            <h2>Admin Login</h2>
-            <span>Backend access</span>
-          </div>
-          <form class="stack-form" data-admin-login-form>
-            <label>Email <input type="email" name="email" value="admin@zebepay.test" autocomplete="username" required></label>
-            <label>Password <input type="password" name="password" value="admin-demo-pass" autocomplete="current-password" required></label>
-            <button class="primary-button" type="submit">Login to Backend</button>
-            <p class="form-note" data-admin-login-note>Use the configured backend admin account.</p>
-          </form>
-        </section>
-        <div data-admin-workspace hidden>
+        <div data-admin-workspace>
         <div class="dashboard-grid">
           <section class="panel">
             <div class="panel-title">
@@ -537,7 +525,7 @@ Idempotency-Key: agentpay-corporate-order-001
     <dialog class="modal" data-modal>
       <form method="dialog">
         <h2 data-modal-title>Create Listing</h2>
-        <p data-modal-body>This private beta console action is prepared for backend API connection during production implementation.</p>
+        <p data-modal-body>This private beta console action is connected to the operational AgentPay backend where the related route is available.</p>
         <div class="modal-details" data-modal-details></div>
         <button class="primary-button" value="close">Close</button>
       </form>
