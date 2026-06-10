@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zebepay.com/schemas/agentpay.listing.agentpay-corporate-deployment.v1.json",
+  "title": "AgentPay Enterprise Node Deployment Package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "company_registration",
+    "buyer_agent",
+    "target_deployment",
+    "delivery_contact",
+    "acceptance_terms"
+  ],
+  "properties": {
+    "company_registration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["legal_name", "registration_country", "registration_number"],
+      "properties": {
+        "legal_name": { "type": "string", "minLength": 2, "maxLength": 160 },
+        "registration_country": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "registration_number": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "website": { "type": "string", "format": "uri", "maxLength": 240 }
+      }
+    },
+    "buyer_agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent_id", "ed25519_public_key"],
+      "properties": {
+        "agent_id": { "type": "string", "minLength": 3, "maxLength": 120 },
+        "ed25519_public_key": {
+          "type": "string",
+          "description": "Base64 or multibase-encoded Ed25519 public key controlled by the buyer agent.",
+          "minLength": 32,
+          "maxLength": 160
+        },
+        "callback_url": { "type": "string", "format": "uri", "maxLength": 300 }
+      }
+    },
+    "target_deployment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["environment", "hosting_provider", "target_domain", "api_subdomain"],
+      "properties": {
+        "environment": { "type": "string", "enum": ["sandbox", "pilot", "staging", "production-planning"] },
+        "hosting_provider": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "target_domain": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "api_subdomain": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "database_preference": { "type": "string", "enum": ["postgresql", "managed-postgresql", "buyer-to-confirm"] },
+        "object_storage_preference": { "type": "string", "maxLength": 120 }
+      }
+    },
+    "delivery_contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "email"],
+      "properties": {
+        "name": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "email": { "type": "string", "format": "email", "maxLength": 180 },
+        "timezone": { "type": "string", "maxLength": 80 }
+      }
+    },
+    "acceptance_terms": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "acknowledges_demo_boundary",
+        "acknowledges_no_live_payment_processing",
+        "acknowledges_launch_control_required"
+      ],
+      "properties": {
+        "acknowledges_demo_boundary": { "type": "boolean", "const": true },
+        "acknowledges_no_live_payment_processing": { "type": "boolean", "const": true },
+        "acknowledges_launch_control_required": { "type": "boolean", "const": true },
+        "notes": { "type": "string", "maxLength": 1000 }
+      }
+    }
+  }
+}

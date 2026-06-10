@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { signAgentRequest, verifyAgentAuthorization } from "../src/auth.js";
+import { createAdminToken, signAgentRequest, verifyAdminCredentials, verifyAdminToken, verifyAgentAuthorization } from "../src/auth.js";
 
 describe("agent request authorization", () => {
   it("verifies HMAC-signed agent requests", () => {
@@ -68,5 +68,60 @@ describe("agent request authorization", () => {
 
     assert.equal(result.ok, true);
     assert.equal(result.mode, "development-unsecured");
+  });
+});
+
+describe("admin backend authorization", () => {
+  it("verifies configured admin credentials", () => {
+    assert.equal(verifyAdminCredentials({
+      email: "admin@zebepay.test",
+      password: "admin-demo-pass",
+      expectedEmail: "admin@zebepay.test",
+      expectedPassword: "admin-demo-pass"
+    }), true);
+  });
+
+  it("rejects invalid admin credentials", () => {
+    assert.equal(verifyAdminCredentials({
+      email: "admin@zebepay.test",
+      password: "wrong",
+      expectedEmail: "admin@zebepay.test",
+      expectedPassword: "admin-demo-pass"
+    }), false);
+  });
+
+  it("creates and verifies admin bearer tokens", () => {
+    const token = createAdminToken({
+      email: "admin@zebepay.test",
+      secret: "admin-secret",
+      now: 1000,
+      ttlMs: 5000
+    });
+
+    const result = verifyAdminToken({
+      authorization: `Bearer ${token}`,
+      secret: "admin-secret",
+      now: 2000
+    });
+
+    assert.equal(result.ok, true);
+    assert.equal(result.email, "admin@zebepay.test");
+  });
+
+  it("rejects expired admin bearer tokens", () => {
+    const token = createAdminToken({
+      email: "admin@zebepay.test",
+      secret: "admin-secret",
+      now: 1000,
+      ttlMs: 5000
+    });
+
+    const result = verifyAdminToken({
+      authorization: `Bearer ${token}`,
+      secret: "admin-secret",
+      now: 7000
+    });
+
+    assert.equal(result.ok, false);
   });
 });

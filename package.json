@@ -1,0 +1,15 @@
+{
+  "name": "agentpay-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AgentPay MVP with static frontend, plain Node.js backend, listing dashboard, disputes, wallet ledger, and escrow primitives.",
+  "scripts": {
+    "backend:start": "npm --prefix backend-service start",
+    "frontend:start": "node preview-server.mjs",
+    "test": "npm --prefix backend-service test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

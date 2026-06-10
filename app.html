@@ -10,12 +10,16 @@
     <link rel="stylesheet" href="./app.css">
   </head>
   <body>
+    <button class="mobile-menu-button" type="button" data-mobile-menu-toggle aria-label="Open navigation" aria-expanded="false">Menu</button>
+    <div class="sidebar-scrim" data-sidebar-scrim></div>
     <aside class="sidebar" aria-label="AgentPay console navigation">
       <a class="console-brand" href="./" aria-label="AgentPay public site">
         <img src="./assets/agentpay-logo.svg?v=20260605b" alt="AgentPay">
       </a>
       <nav class="console-nav" data-console-nav>
         <button class="active" type="button" data-view="dashboard">Dashboard</button>
+        <button type="button" data-view="dashboard">Listings</button>
+        <button type="button" data-view="disputes">Disputes</button>
         <button type="button" data-view="wallet">Wallet</button>
         <button type="button" data-view="agents">Agents</button>
         <button type="button" data-view="marketplace">Marketplace</button>
@@ -23,6 +27,7 @@
         <button type="button" data-view="merchant">Merchant</button>
         <button type="button" data-view="escrow">Escrow</button>
         <button type="button" data-view="admin">Admin</button>
+        <button type="button" data-view="messages">Messages</button>
         <button type="button" data-view="api">API Keys</button>
       </nav>
       <div class="sidebar-status">
@@ -34,39 +39,189 @@
     <main class="console-shell">
       <header class="topbar">
         <div>
-          <p class="eyebrow">AgentPay Product Console</p>
-          <h1>Control wallets, agents, escrow, and marketplace operations.</h1>
+          <p class="eyebrow">Seller Admin Console</p>
+          <h1>Marketplace Listing Dashboard</h1>
+          <p class="topbar-subtitle">Add, edit, delete, discount, publish, pause, and manage all products listed for sale.</p>
         </div>
         <div class="topbar-actions">
-          <a class="quiet-button" href="./">Public Site</a>
-          <button class="quiet-button" type="button" data-jump-view="sandbox">Sandbox Wallet</button>
-          <button class="primary-button" type="button" data-action="open-modal">Create Listing</button>
+          <button class="primary-button" type="button" data-add-product>Add New Product</button>
+          <button class="quiet-button" type="button" data-export-listings>Export Listings</button>
+          <a class="quiet-button" href="./marketplace">View Public Store</a>
+          <button class="quiet-button" type="button" data-refresh-listings>Sync / Refresh</button>
         </div>
       </header>
 
       <section class="view active" data-page="dashboard">
-        <div class="metric-grid">
-          <article><span>Total Balance</span><strong>$12,840.50</strong><small>USDT equivalent</small></article>
-          <article><span>Locked Escrow</span><strong>$2,190.00</strong><small>12 active orders</small></article>
-          <article><span>24h Agent Spend</span><strong>$386.40</strong><small>42% below limit</small></article>
-          <article><span>Risk Queue</span><strong>7</strong><small>Admin reviews pending</small></article>
+        <div class="metric-grid listing-summary-grid" data-listing-summary></div>
+
+        <div class="section-row">
+          <div>
+            <p class="eyebrow">Listings</p>
+            <h2>Products for sale</h2>
+          </div>
+          <button class="primary-button" type="button" data-add-product>Add New Product</button>
         </div>
 
-        <div class="dashboard-grid">
-          <section class="panel">
-            <div class="panel-title">
-              <h2>Agent Status</h2>
-              <span>Operational view</span>
-            </div>
-            <div class="agent-table" data-agent-table></div>
-          </section>
+        <div class="market-toolbar listing-toolbar">
+          <input type="search" placeholder="Search product name" data-product-search>
+          <select data-product-category><option value="all">All categories</option></select>
+          <select data-product-status>
+            <option value="all">All statuses</option>
+            <option value="draft">Draft</option>
+            <option value="active">Active</option>
+            <option value="paused">Paused</option>
+            <option value="pending_review">Pending review</option>
+            <option value="archived">Archived</option>
+          </select>
+          <select data-product-type>
+            <option value="all">All types</option>
+            <option value="digital">Digital</option>
+            <option value="physical">Physical</option>
+            <option value="service">Service</option>
+          </select>
+          <label class="filter-check"><input type="checkbox" data-product-discounted> Discounted only</label>
+        </div>
 
+        <section class="panel listing-management-panel">
+          <div class="panel-title">
+            <h2>Product Catalog</h2>
+            <span data-product-count>0 products</span>
+          </div>
+          <div class="product-table" data-product-table></div>
+        </section>
+
+        <section class="panel product-form-panel" data-product-form-panel>
+          <div class="panel-title">
+            <h2 data-product-form-title>Add New Product</h2>
+            <span>Listing editor</span>
+          </div>
+          <form class="stack-form product-form" data-product-form>
+            <input type="hidden" name="id">
+            <label>Product title <input name="title" required></label>
+            <label class="wide">Product description <textarea name="description" rows="4" required></textarea></label>
+            <label>Product category <input name="category" required></label>
+            <label>Product type
+              <select name="productType" required>
+                <option value="digital">Digital</option>
+                <option value="physical">Physical</option>
+                <option value="service">Service</option>
+              </select>
+            </label>
+            <label>Normal price <input name="price" type="number" min="0.01" step="0.01" required></label>
+            <label>Discount type
+              <select name="discountType" data-discount-type>
+                <option value="none">None</option>
+                <option value="fixed">Fixed amount</option>
+                <option value="percentage">Percentage</option>
+              </select>
+            </label>
+            <label>Discount value <input name="discountValue" type="number" min="0" step="0.01" data-discount-value></label>
+            <label>Final price preview <input name="finalPrice" readonly data-final-price></label>
+            <label class="wide">Product image URL or upload placeholder <input name="imageUrl" placeholder="https://... or upload pending"></label>
+            <label class="wide">Digital file URL/upload placeholder <input name="digitalFileUrl" placeholder="private://file.zip"></label>
+            <label>Stock quantity <input name="stockQuantity" type="number" min="0" step="1" value="0"></label>
+            <label>Status
+              <select name="status">
+                <option value="draft">Draft</option>
+                <option value="active">Active</option>
+                <option value="paused">Paused</option>
+                <option value="pending_review">Submit for review</option>
+                <option value="archived">Archived</option>
+              </select>
+            </label>
+            <label class="wide">Delivery instructions <textarea name="deliveryInstructions" rows="3"></textarea></label>
+            <div class="form-actions wide">
+              <button class="primary-button" type="submit" data-product-submit>Save Product</button>
+              <button class="quiet-button" type="button" data-product-cancel>Cancel</button>
+            </div>
+            <p class="form-note wide" data-product-note>Static dashboard changes update the current UI state. Backend persistence routes are available for authenticated seller/admin sessions.</p>
+          </form>
+        </section>
+
+        <div class="dashboard-grid listing-dashboard-grid">
           <section class="panel">
             <div class="panel-title">
-              <h2>Recent Activity</h2>
-              <span>Audit-linked</span>
+              <h2>Listing Activity</h2>
+              <span>Recent product changes</span>
             </div>
             <div class="activity-feed" data-activity-feed></div>
+          </section>
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Review Notes</h2>
+              <span>Seller queue</span>
+            </div>
+            <div class="review-list" data-review-list></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" data-page="disputes">
+        <div class="section-row">
+          <div>
+            <p class="eyebrow">Escrow Operations</p>
+            <h2>Dispute Management</h2>
+            <p class="form-note">Review buyer and seller disputes, inspect evidence, message users, and resolve escrow cases.</p>
+          </div>
+          <button class="quiet-button" type="button" data-refresh-disputes>Refresh Disputes</button>
+        </div>
+        <div class="metric-grid dispute-summary-grid" data-dispute-summary></div>
+        <div class="dispute-layout">
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Dispute Queue</h2>
+              <span data-dispute-count>0 cases</span>
+            </div>
+            <div class="product-table dispute-table" data-dispute-table></div>
+          </section>
+          <section class="panel dispute-detail-panel">
+            <div class="panel-title">
+              <h2 data-dispute-title>Open a dispute case</h2>
+              <span data-dispute-status>Waiting</span>
+            </div>
+            <div class="dispute-detail" data-dispute-detail></div>
+            <div class="market-toolbar dispute-actions">
+              <button class="quiet-button" type="button" data-dispute-action="under_review">Mark under review</button>
+              <button class="quiet-button" type="button" data-dispute-action="request_buyer">Request buyer evidence</button>
+              <button class="quiet-button" type="button" data-dispute-action="request_seller">Request seller evidence</button>
+              <button class="quiet-button" type="button" data-dispute-action="escalate">Escalate</button>
+            </div>
+            <form class="stack-form" data-dispute-message-form>
+              <label>Recipient
+                <select name="recipientRole">
+                  <option value="buyer">Buyer</option>
+                  <option value="seller">Seller</option>
+                </select>
+              </label>
+              <label>Template
+                <select name="template">
+                  <option value="">Blank</option>
+                  <option value="Please provide more evidence">Please provide more evidence</option>
+                  <option value="Seller response required">Seller response required</option>
+                  <option value="Buyer response required">Buyer response required</option>
+                  <option value="Dispute under review">Dispute under review</option>
+                  <option value="Refund approved">Refund approved</option>
+                  <option value="Escrow released">Escrow released</option>
+                  <option value="Dispute closed">Dispute closed</option>
+                </select>
+              </label>
+              <label class="wide">Message <textarea name="body" rows="3" placeholder="Write a dispute message"></textarea></label>
+              <div class="form-actions wide">
+                <button class="primary-button" type="submit">Send Dispute Message</button>
+              </div>
+            </form>
+            <form class="stack-form" data-dispute-note-form>
+              <label class="wide">Internal admin note <textarea name="note" rows="3"></textarea></label>
+              <div class="form-actions wide"><button class="quiet-button" type="submit">Add Admin Note</button></div>
+            </form>
+            <div class="market-toolbar dispute-resolution-actions">
+              <input type="number" min="0.01" step="0.01" placeholder="Partial amount" data-partial-refund-amount>
+              <button class="danger-button" type="button" data-dispute-resolution="refund">Refund Buyer</button>
+              <button class="primary-button" type="button" data-dispute-resolution="release">Release Seller</button>
+              <button class="quiet-button" type="button" data-dispute-resolution="partial-refund">Partial Refund</button>
+              <button class="quiet-button" type="button" data-dispute-action="close">Close</button>
+            </div>
+            <p class="form-note" data-dispute-note>Select a dispute to manage connected actions.</p>
           </section>
         </div>
       </section>
@@ -126,6 +281,71 @@
           </select>
         </div>
         <div class="listing-grid" data-listings></div>
+      </section>
+
+      <section class="view" data-page="messages">
+        <div class="section-row">
+          <div>
+            <p class="eyebrow">Owner Messaging</p>
+            <h2>Message buyers, sellers, support, and admins.</h2>
+          </div>
+          <button class="primary-button" type="button" data-send-announcement>Send Announcement</button>
+        </div>
+        <div class="messages-layout">
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Users</h2>
+              <span>Recipients</span>
+            </div>
+            <div class="market-toolbar message-toolbar">
+              <input type="search" placeholder="Search users" data-user-search>
+              <select data-message-status>
+                <option value="all">All messages</option>
+                <option value="sent">Sent</option>
+                <option value="read">Read</option>
+                <option value="failed">Failed</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+            <div class="user-list" data-user-list></div>
+          </section>
+          <section class="panel">
+            <div class="panel-title">
+              <h2>Conversation</h2>
+              <span data-message-thread-title>Select a user</span>
+            </div>
+            <div class="message-thread" data-message-thread></div>
+            <form class="stack-form message-form" data-message-form>
+              <label>Message template
+                <select name="template" data-message-template>
+                  <option value="">Blank</option>
+                  <option value="Listing approved">Listing approved</option>
+                  <option value="Listing rejected">Listing rejected</option>
+                  <option value="Order update">Order update</option>
+                  <option value="Payment/escrow notice">Payment/escrow notice</option>
+                  <option value="Dispute notice">Dispute notice</option>
+                  <option value="Account warning">Account warning</option>
+                  <option value="General announcement">General announcement</option>
+                </select>
+              </label>
+              <label>Related entity
+                <select name="relatedEntityType">
+                  <option value="general">General</option>
+                  <option value="listing">Listing</option>
+                  <option value="order">Order</option>
+                  <option value="escrow">Escrow</option>
+                  <option value="dispute">Dispute</option>
+                  <option value="wallet">Wallet</option>
+                  <option value="account">Account</option>
+                </select>
+              </label>
+              <label class="wide">Message subject <input name="subject" required maxlength="140"></label>
+              <label class="wide">Message body <textarea name="body" rows="5" required maxlength="5000"></textarea></label>
+              <button class="primary-button wide" type="submit">Send Message</button>
+              <p class="form-note wide" data-message-note>Internal in-app messaging only. Email/SMS notifications are TODO for a later integration.</p>
+            </form>
+          </section>
+        </div>
       </section>
 
       <section class="view" data-page="sandbox">
@@ -229,11 +449,31 @@
       </section>
 
       <section class="view" data-page="admin">
+        <div class="section-row">
+          <div>
+            <p class="eyebrow">Admin Backend</p>
+            <h2>Login to manage reviews, risk controls, and audit events.</h2>
+          </div>
+          <button class="quiet-button" type="button" data-admin-logout hidden>Log Out</button>
+        </div>
+        <section class="panel" data-admin-login-panel>
+          <div class="panel-title">
+            <h2>Admin Login</h2>
+            <span>Backend access</span>
+          </div>
+          <form class="stack-form" data-admin-login-form>
+            <label>Email <input type="email" name="email" value="admin@zebepay.test" autocomplete="username" required></label>
+            <label>Password <input type="password" name="password" value="admin-demo-pass" autocomplete="current-password" required></label>
+            <button class="primary-button" type="submit">Login to Backend</button>
+            <p class="form-note" data-admin-login-note>Use the configured backend admin account.</p>
+          </form>
+        </section>
+        <div data-admin-workspace hidden>
         <div class="dashboard-grid">
           <section class="panel">
             <div class="panel-title">
               <h2>Review Queue</h2>
-              <span>KYC, listings, disputes</span>
+              <span data-admin-status>KYC, listings, disputes</span>
             </div>
             <div class="review-list" data-review-list></div>
           </section>
@@ -243,12 +483,20 @@
               <span>Operator actions</span>
             </div>
             <div class="control-list">
-              <button type="button">Pause all high-risk agents</button>
-              <button type="button">Export audit log</button>
-              <button type="button">Open dispute board</button>
-              <button type="button">Reconcile wallet deposits</button>
+              <button type="button" data-admin-control="pause-risk">Pause all high-risk agents</button>
+              <button type="button" data-admin-control="export-audit">Export audit log</button>
+              <button type="button" data-admin-control="disputes">Open dispute board</button>
+              <button type="button" data-admin-control="reconcile">Reconcile wallet deposits</button>
             </div>
           </section>
+        </div>
+        <section class="panel audit-panel">
+          <div class="panel-title">
+            <h2>Audit Events</h2>
+            <span>Backend feed</span>
+          </div>
+          <div class="audit-list" data-audit-events></div>
+        </section>
         </div>
       </section>
 
@@ -288,12 +536,13 @@ Idempotency-Key: agentpay-corporate-order-001
 
     <dialog class="modal" data-modal>
       <form method="dialog">
-        <h2>Create Listing</h2>
-        <p>This private beta console action is prepared for backend API connection during production implementation.</p>
+        <h2 data-modal-title>Create Listing</h2>
+        <p data-modal-body>This private beta console action is prepared for backend API connection during production implementation.</p>
+        <div class="modal-details" data-modal-details></div>
         <button class="primary-button" value="close">Close</button>
       </form>
     </dialog>
 
-    <script src="./app.js?v=20260606publish"></script>
+    <script src="./app.js?v=20260610responsive-stage-ab"></script>
   </body>
 </html>
