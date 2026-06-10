@@ -6,6 +6,9 @@ RewriteRule ^buy\.html$ /developers [R=301,L]
 RewriteRule ^sell/?$ /merchant [R=301,L]
 RewriteRule ^buy/?$ /developers [R=301,L]
 
+# Route the public docs page before the docs/ directory can shadow it.
+RewriteRule ^docs/?$ docs.html [NC,L]
+
 # Remove visible .html extensions from all public pages.
 RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
 RewriteRule ^(.+)\.html$ /$1 [R=301,L]
